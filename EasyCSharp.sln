@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharp.Generator", "EasyCSharp\EasyCSharp.Generator.csproj", "{EF464483-672B-4907-A491-156E25628D30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharp.Generator", "EasyCSharp.Generator\EasyCSharp.Generator.csproj", "{EF464483-672B-4907-A491-156E25628D30}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharpTester", "EasyCSharpTester\EasyCSharpTester.csproj", "{D3877D66-8025-4ECE-915F-95DF1ED9DCE8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharp", "EasyCSharp.Types\EasyCSharp.csproj", "{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharp", "EasyCSharp\EasyCSharp.csproj", "{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
