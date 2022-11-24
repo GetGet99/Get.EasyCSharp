@@ -2,6 +2,6 @@
 
 namespace EasyCSharp;
 [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = false)]
-public class CastFromAttribute : Attribute {
+class CastFromAttribute : Attribute {
     public CastFromAttribute(Type Type) { }
 }

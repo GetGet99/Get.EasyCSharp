@@ -2,7 +2,7 @@
 using System.Diagnostics;
 namespace EasyCSharp;
 
-public class NullablePropertyWrapperAttribute : PropertyAttribute
+class NullablePropertyWrapperAttribute : PropertyAttribute
 {
     
 }

@@ -9,11 +9,16 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-
+using CopySourceGenerator;
 namespace EasyCSharp;
+[CopySource("EventSource", typeof(EventAttribute))]
 [Generator]
-public class EventHandlerGenerator : GeneratorBase<MethodAttributeSyntaxReceiver>
+public partial class EventHandlerGenerator : GeneratorBase<MethodAttributeSyntaxReceiver>
 {
+    protected override void OnInitialize(GeneratorInitializationContext context)
+    {
+        context.RegisterForPostInitialization(x => x.AddSource($"{typeof(EventAttribute).FullName}.g.cs", EventSource));
+    }
     readonly static EventAttribute DefaultEventAttribute = new(typeof(EventHandler));
     protected override MethodAttributeSyntaxReceiver ConstructSyntaxReceiver()
         => new(typeof(EventAttribute).FullName);

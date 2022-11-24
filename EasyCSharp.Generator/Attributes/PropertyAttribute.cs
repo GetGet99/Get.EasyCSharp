@@ -2,11 +2,11 @@
 using System.Diagnostics;
 namespace EasyCSharp;
 
-public enum PropertyVisibility : byte { Default = default, Public, Protected, Private, DoNotGenerate }
+enum PropertyVisibility : byte { Default = default, Public, Protected, Private, DoNotGenerate }
 
 [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 [Conditional("AutoNotifyGenerator_DEBUG")]
-public class PropertyAttribute : Attribute
+class PropertyAttribute : Attribute
 {
     public PropertyAttribute()
     {

@@ -5,7 +5,7 @@ namespace EasyCSharp;
 /// Generates a method with the same argument types as the given delegate type
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-public class EventAttribute : Attribute
+class EventAttribute : Attribute
 {
     public EventAttribute(Type Type) { }
 

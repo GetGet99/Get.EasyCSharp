@@ -1,3 +1,3 @@
 ﻿namespace EasyCSharp;
 
-public class AutoNotifyPropertyAttribute : PropertyAttribute { }
+class AutoNotifyPropertyAttribute : PropertyAttribute { }
