@@ -1,4 +1,7 @@
-﻿using System;
+﻿#pragma warning disable IDE0240
+#nullable enable
+#pragma warning restore IDE0240
+using System;
 namespace EasyCSharp;
 
 /// <summary>
@@ -11,5 +14,5 @@ class EventAttribute : Attribute
 
     public string? Name { get; set; }
     public bool AgressiveInline { get; set; } = true;
-    public PropertyVisibility Visibility { get; set; } = PropertyVisibility.Default;
+    public GeneratorVisibility Visibility { get; set; } = GeneratorVisibility.Default;
 }

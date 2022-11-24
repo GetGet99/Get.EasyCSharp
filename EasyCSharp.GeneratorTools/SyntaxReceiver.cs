@@ -1,4 +1,7 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿#pragma warning disable IDE0240
+#nullable enable
+#pragma warning restore IDE0240
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;

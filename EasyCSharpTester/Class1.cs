@@ -4,18 +4,18 @@ namespace EasyCSharpTester
 {
     public partial class Class1
     {
-        [Property(PropertyVisibility = PropertyVisibility.Public)]
-        bool _TestProperty1;
         [Property(
-            SetVisibility = PropertyVisibility.Protected)
-        ]
+            SetVisibility = Visibility.Protected,
+            OnChanged = nameof(Proc)
+        )]
         int _TestProperty2;
-        [AutoNotify]
+
+        [AutoNotifyProperty(GetVisibility = Visibility.Private)]
         bool _Test2;
 
         public void Proc()
         {
-            TestProperty1 = true;
+            TestProperty2 = 1;
             //Test2.
         }
     }

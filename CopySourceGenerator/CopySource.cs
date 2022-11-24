@@ -53,11 +53,14 @@ public class CopySourceCode : GeneratorBase<ClassAttributeSyntaxReceiver>
                 {
                     context.AddSource($"{ClassSymbol}.CopySourceGenerated.g.cs", $$"""
                         namespace {{ClassSymbol.ContainingNamespace}} {
-                            partial {{ClassSymbol.TypeKind.ToString().ToLower()}} {{ClassSymbol.Name}} {
-                                {{string.Join("\n\n",
+                            partial {{ClassSymbol.TypeKind.ToString().ToLower()}} {{ClassSymbol.Name}}{{(
+                            ClassSymbol.TypeParameters.Length == 0 ? "" :
+                            $"<{string.Join(", ", from x in ClassSymbol.TypeParameters select x.Name)}>"
+                        )}} {
+                                {{string.Join("\r\n\r\n",
                                         from attribute in attributes
-                                        select $"const string {attribute.MemberName} = \"\"\"\n" +
-                                        $"{attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}\n\"\"\";".Indent(3)
+                                        select $"const string {attribute.MemberName} = \"\"\"\r\n" +
+                                        $"{attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}\r\n\"\"\";".Indent(3)
                                     )}}
                             }
                         }
@@ -76,7 +79,7 @@ static partial class Extension
     public static string Indent(this string Original, int IndentTimes = 1, int IndentSpace = 4)
     {
         var Indent = new string(' ', IndentSpace * IndentTimes);
-        var slashNindent = $"\n{Indent}";
-        return Indent + Original.Replace("\n", slashNindent);
+        var slashNindent = $"\r\n{Indent}";
+        return Indent + Original.Replace("\r\n", slashNindent);
     }
 }

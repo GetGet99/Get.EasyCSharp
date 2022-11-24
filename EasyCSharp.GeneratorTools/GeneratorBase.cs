@@ -1,9 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#pragma warning disable IDE0240
+#nullable enable
+#pragma warning restore IDE0240
+using Microsoft.CodeAnalysis;
 
 namespace EasyCSharp.GeneratorTools;
 
