@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace EasyCSharp.Generator;
+namespace EasyCSharp.GeneratorTools;
 
 public abstract class GeneratorBase<T> : ISourceGenerator where T : ISyntaxContextReceiver
 {
@@ -23,4 +23,18 @@ public abstract class GeneratorBase<T> : ISourceGenerator where T : ISyntaxConte
     }
     protected virtual void OnInitialize(GeneratorInitializationContext context) { }
     protected virtual void OnExecute(GeneratorExecutionContext context, T SyntaxReceiver) { }
+}
+public abstract class GeneratorBase : ISourceGenerator
+{
+    public void Initialize(GeneratorInitializationContext context)
+    {
+        OnInitialize(context);
+    }
+
+    public void Execute(GeneratorExecutionContext context)
+    {
+        OnExecute(context);
+    }
+    protected virtual void OnInitialize(GeneratorInitializationContext context) { }
+    protected virtual void OnExecute(GeneratorExecutionContext context) { }
 }

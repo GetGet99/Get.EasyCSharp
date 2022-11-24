@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EasyCSharp.Generator
+namespace EasyCSharp.GeneratorTools
 {
     static class Extension
     {

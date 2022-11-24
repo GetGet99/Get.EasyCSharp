@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace EasyCSharp;
+
 /// <summary>
 /// Generates a method with the same argument types as the given delegate type
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
 public class EventAttribute : Attribute
 {
     public EventAttribute(Type Type) { }

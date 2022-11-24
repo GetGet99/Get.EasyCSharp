@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using CopySourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,9 +12,15 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace EasyCSharp;
 
+[CopySource("AttributeSource", typeof(AutoNotifyPropertyAttribute))]
 [Generator]
-public class AutoNotifyPropertyGenerator : PropertyGenerator
+public partial class AutoNotifyPropertyGenerator : PropertyGeneratorBase
 {
+    protected override void OnInitialize(GeneratorInitializationContext context)
+    {
+        context.RegisterForPostInitialization(x => x.AddSource($"{typeof(AutoNotifyPropertyAttribute).FullName}.g.cs", AttributeSource));
+    }
+
     protected override string AttributeTypeName => typeof(AutoNotifyPropertyAttribute).FullName;
     protected override string FileName(string ClaseName) => $"{ClaseName}.GeneratedAutoNotifyProperty.g.cs";
     protected override string ClassHeadLogic(GeneratorExecutionContext context, INamedTypeSymbol classSymbol)

@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharpTester", "EasyCSh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharp", "EasyCSharp\EasyCSharp.csproj", "{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopySourceGenerator", "CopySourceGenerator\CopySourceGenerator.csproj", "{1468FDB5-D5A2-4718-B8DC-78D2DA477AFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCSharp.GeneratorTools", "EasyCSharp.GeneratorTools\EasyCSharp.GeneratorTools.csproj", "{C184A704-C67D-42E1-8DCC-2A952A4D19EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1468FDB5-D5A2-4718-B8DC-78D2DA477AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1468FDB5-D5A2-4718-B8DC-78D2DA477AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1468FDB5-D5A2-4718-B8DC-78D2DA477AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1468FDB5-D5A2-4718-B8DC-78D2DA477AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C184A704-C67D-42E1-8DCC-2A952A4D19EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C184A704-C67D-42E1-8DCC-2A952A4D19EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C184A704-C67D-42E1-8DCC-2A952A4D19EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C184A704-C67D-42E1-8DCC-2A952A4D19EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

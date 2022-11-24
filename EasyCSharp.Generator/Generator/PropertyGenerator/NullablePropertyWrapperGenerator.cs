@@ -8,12 +8,18 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-
+using CopySourceGenerator;
 namespace EasyCSharp;
 
+[CopySource("AttributeSource", typeof(NullablePropertyWrapperAttribute))]
 [Generator]
-public class NullablePropertyWrapperGenerator : PropertyGenerator
+public partial class NullablePropertyWrapperGenerator : PropertyGeneratorBase
 {
+    protected override void OnInitialize(GeneratorInitializationContext context)
+    {
+        context.RegisterForPostInitialization(x => x.AddSource($"{typeof(NullablePropertyWrapperAttribute).FullName}.g.cs", AttributeSource));
+    }
+
     protected override string AttributeTypeName => typeof(NullablePropertyWrapperAttribute).FullName;
     protected override string FileName(string ClaseName) => $"{ClaseName}.GeneratedNullableProperty.g.cs";
     protected override string GetLogic(IFieldSymbol fieldSymbol, string PropertyName, string Indent)
