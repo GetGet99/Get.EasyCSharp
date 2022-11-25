@@ -5,6 +5,7 @@ using EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using CopySourceGenerator;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace EasyCSharp;
 [CopySource("PropertyAttributeSource", typeof(AddAttributeConverterAttribute))]

@@ -69,5 +69,17 @@ namespace EasyCSharp.GeneratorTools
         //{
         //var attr = attribute.
         //}
+        public static IncrementalValueProvider<TOut> Select<TIn, TOut>(this IncrementalValueProvider<TIn> valueProvider, Func<TIn, TOut> func)
+        {
+            return valueProvider.Select((x, _) => func(x));
+        }
+        public static IncrementalValuesProvider<TOut> SelectMany<TIn, TOut>(this IncrementalValueProvider<TIn> valueProvider, Func<TIn, IEnumerable<TOut>> func)
+        {
+            return valueProvider.SelectMany((x, _) => func(x));
+        }
+        //public static IncrementalValueProvider<TIn> Where<TIn>(this IncrementalValueProvider<TIn> valueProvider, Func<TIn, bool> func)
+        //{
+        //    return valueProvider.Where(func);
+        //}
     }
 }

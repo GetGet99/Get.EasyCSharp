@@ -5,6 +5,10 @@
 		<LangVersion>Preview</LangVersion>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="GeneratorBaseNew.cs" />
+	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\CopySourceGenerator\CopySourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>

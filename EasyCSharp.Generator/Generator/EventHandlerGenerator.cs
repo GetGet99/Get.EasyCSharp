@@ -12,12 +12,17 @@ using Microsoft.CodeAnalysis.Text;
 using CopySourceGenerator;
 namespace EasyCSharp;
 [CopySource("EventSource", typeof(EventAttribute))]
+[CopySource("CastFromSource", typeof(CastFromAttribute))]
 [Generator]
 public partial class EventHandlerGenerator : GeneratorBase<MethodAttributeSyntaxReceiver>
 {
     protected override void OnInitialize(GeneratorInitializationContext context)
     {
-        context.RegisterForPostInitialization(x => x.AddSource($"{typeof(EventAttribute).FullName}.g.cs", EventSource));
+        context.RegisterForPostInitialization(x =>
+        {
+            x.AddSource($"{typeof(EventAttribute).FullName}.g.cs", EventSource);
+            x.AddSource($"{typeof(CastFromAttribute).FullName}.g.cs", CastFromSource);
+        });
     }
     readonly static EventAttribute DefaultEventAttribute = new(typeof(EventHandler));
     protected override MethodAttributeSyntaxReceiver ConstructSyntaxReceiver()
@@ -62,7 +67,7 @@ public partial class EventHandlerGenerator : GeneratorBase<MethodAttributeSyntax
                                     let Inline = attribute.NamedArguments.SingleOrDefault(x => x.Key == nameof(EventAttribute.AgressiveInline)).Value.Value.CastOrDefault(DefaultEventAttribute.AgressiveInline)
                                     /// <see cref="EventAttribute.Visibility"/>
                                     let VisibilityPrefix = GetVisibilityPrefix(
-                                        method.DeclaredAccessibility.ToString().ToLower(), 
+                                        method.DeclaredAccessibility.ToString().ToLower(),
                                         attribute.NamedArguments.SingleOrDefault(x => x.Key == nameof(EventAttribute.Visibility)).Value,
                                         DefaultEventAttribute.Visibility
                                     )
@@ -87,28 +92,24 @@ public partial class EventHandlerGenerator : GeneratorBase<MethodAttributeSyntax
                                             )
                                         select (Param, MatchedParam)
                                     ).ToArray()
-                                        select
-                                            $$"""
+                                    select
+                                        $$"""
                                             /// <summary>
                                             /// <inheritdoc cref="{{method.ToDisplayString()}}"/>
                                             /// </summary>
                                             {{(Inline ? "[MethodImpl(MethodImplOptions.AggressiveInlining)]" : "// Inline Disabled")}}
                                             {{VisibilityPrefix}}{{(method.IsStatic ? " static" : "")}} {{method.ReturnType}} {{EventName ?? method.Name}}({{string.Join(", ",
-                                                from x in annotatedParams.Enumerate()
-                                                let type = (x.Item.MatchedParam.castFromType ?? x.Item.Param.Type)
-                                                select $"{(x.Item.MatchedParam.methodParam is null ?
-                                                    type.WithNullableAnnotation(NullableAnnotation.Annotated).ToDisplayString() :
-                                                    type.ToDisplayString())} {(x.Item.MatchedParam.methodParam is null ? $"__{x.Index + 1}" : x.Item.MatchedParam.methodParam.Name)}"
-                                            )}}) { {{method.Name}}({{
-                                                    string.Join(", ",
-                                                        from x in paramsWithCast
-                                                        select (
-                                                            x.castFromType is null ? "" : $"({
-                                                                x.methodParam.Type
-                                                            })"
-                                                        ) + x.methodParam.Name
-                                                    )
-                                                }});
+                                            from x in annotatedParams.Enumerate()
+                                            let type = (x.Item.MatchedParam.castFromType ?? x.Item.Param.Type)
+                                            select $"{(x.Item.MatchedParam.methodParam is null ?
+                                                type.WithNullableAnnotation(NullableAnnotation.Annotated).ToDisplayString() :
+                                                type.ToDisplayString())} {(x.Item.MatchedParam.methodParam is null ? $"__{x.Index + 1}" : x.Item.MatchedParam.methodParam.Name)}"
+                                        )}}) { {{method.Name}}({{string.Join(", ",
+                                                    from x in paramsWithCast
+                                                    select (
+                                                        x.castFromType is null ? "" : $"({x.methodParam.Type})"
+                                                    ) + x.methodParam.Name
+                                                )}});
                                             }
                                             """
                                     ).JoinNewLine()
