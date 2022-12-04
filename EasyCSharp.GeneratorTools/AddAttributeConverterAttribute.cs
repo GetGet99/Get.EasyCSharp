@@ -7,7 +7,7 @@ namespace EasyCSharp.GeneratorTools;
 
 enum PropertyVisibility : byte { Default = default, Public, Protected, Private, DoNotGenerate }
 
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
 class AddAttributeConverterAttribute : Attribute
 {
     public AddAttributeConverterAttribute(Type AttributeType) { }

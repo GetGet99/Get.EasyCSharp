@@ -59,8 +59,8 @@ public class CopySourceCode : GeneratorBase<ClassAttributeSyntaxReceiver>
                         )}} {
                                 {{string.Join("\r\n\r\n",
                                         from attribute in attributes
-                                        select $"const string {attribute.MemberName} = \"\"\"\r\n" +
-                                        $"{attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}\r\n\"\"\";".Indent(3)
+                                        select $"const string {attribute.MemberName} = \"\"\"\"\"\"\"\"\"\"\r\n" +
+                                        $"{attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}\r\n\"\"\"\"\"\"\"\"\"\";".Indent(3)
                                     )}}
                             }
                         }

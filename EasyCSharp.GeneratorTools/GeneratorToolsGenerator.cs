@@ -11,6 +11,7 @@ namespace EasyCSharp.GeneratorTools;
 [CopySource("sExtension", typeof(Extension))]
 [CopySource("sGeneratorBase", typeof(GeneratorBase))]
 [CopySource("sSyntaxReceiver", typeof(ClassAttributeSyntaxReceiver))]
+[CopySource("sAttributeBaseGenerator", typeof(AttributeBaseGenerator<,,,>))]
 [Generator]
 public partial class GeneratorToolsGenerator : GeneratorBase
 {
@@ -20,6 +21,7 @@ public partial class GeneratorToolsGenerator : GeneratorBase
             x.AddSource($"{typeof(Extension).FullName}.g.cs", sExtension);
             x.AddSource($"{typeof(GeneratorBase).FullName}.g.cs", sGeneratorBase);
             x.AddSource($"EasyCSharp.GeneratorTools.SyntaxReceiver.g.cs", sSyntaxReceiver);
+            x.AddSource($"EasyCSharp.GeneratorTools.AttributeBaseGenerator.g.cs", sAttributeBaseGenerator);
         });
     }
 }
