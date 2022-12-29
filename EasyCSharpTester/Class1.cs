@@ -4,19 +4,11 @@ namespace EasyCSharpTester
 {
     public partial class Class1
     {
-        [Property(
-            SetVisibility = Visibility.Protected,
-            OnChanged = nameof(Proc)
-        )]
-        int _TestProperty2;
-
-        [AutoNotifyProperty(GetVisibility = Visibility.Private)]
-        bool _Test2;
-
-        public void Proc()
+        [OptionalParameter(nameof(Hello), "\"Hello Substitude Parameter\"")]
+        [OptionalParameter(nameof(GG), 1 + 1)]
+        public void Proc(string Hello, int GG)
         {
-            TestProperty2 = 1;
-            //Test2.
+            
         }
     }
 }

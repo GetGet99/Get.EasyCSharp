@@ -62,7 +62,7 @@ partial class PropertyGeneratorBase<T> : GeneratorBase<FieldAttributeSyntaxRecei
                                         GetVisiblity(attr.Visibility)
                                     }}{{
                                         (attr.OverrideKeyword ? "override " : "")
-                                    }}{{attr.CustomType ?? field.Type}} {{PropertyName}} {
+                                    }}{{(attr.CustomType ?? field.Type).FullName()}} {{PropertyName}} {
                                         
                                         {{( // Get
                                             attr.GetVisibility is GeneratorVisibility.DoNotGenerate ? "// Get is not generated according to the attribute" :

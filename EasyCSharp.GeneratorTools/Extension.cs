@@ -3,8 +3,11 @@
 #pragma warning restore IDE0240
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace EasyCSharp.GeneratorTools
 {
@@ -37,6 +40,13 @@ namespace EasyCSharp.GeneratorTools
             if (Value is T CastedValue) return CastedValue;
             else return DefaultValue;
         }
+        public static string FullName(this ITypeSymbol Symbol)
+        {
+            if (Symbol.ToString().Contains('.'))
+                return $"global::{Symbol}";
+            else
+                return Symbol.ToString();
+        }
         public static T GetProperty<T>(this AttributeData attribute, string AttributeName, T defaultValue)
         {
             bool first = true;
@@ -65,6 +75,12 @@ namespace EasyCSharp.GeneratorTools
             foreach (var member in Type.BaseType.GetMemeberRecursiveBaseType())
                 yield return member;
         }
+        public static bool IsSubclassFrom(this ITypeSymbol? Type, ITypeSymbol? PotentialBaseType)
+        {
+            if (Type is null) return false;
+            if (Type.Equals(PotentialBaseType, SymbolEqualityComparer.Default)) return true;
+            return Type.BaseType.IsSubclassFrom(PotentialBaseType);
+        }
         //public static T GetConstructor<T>(this AttributeData attribute, int index, T? defaultValue = default)
         //{
         //var attr = attribute.
@@ -81,5 +97,28 @@ namespace EasyCSharp.GeneratorTools
         //{
         //    return valueProvider.Where(func);
         //}
+        public static IEnumerable<T> SkipAtIndex<T>(this T[] Items, int index)
+        {
+            for (var i = 0; i < Items.Length; i++)
+            {
+                if (i == index) continue;
+                yield return Items[i];
+            }
+        }
+        public static IEnumerable<T[]> AllCombinations<T>(this T[] Items)
+        {
+            yield return Items;
+            for (var i = 0; i < Items.Length; i++)
+                foreach (var enus in Items.SkipAtIndex(i).ToArray().AllCombinations())
+                {
+                    yield return enus;
+                }
+        }
+        public static T FirstOrDefault<T>(this IEnumerable<T> Items, T defaultValue)
+        {
+            foreach (var item in Items)
+                return item;
+            return defaultValue;
+        }
     }
 }

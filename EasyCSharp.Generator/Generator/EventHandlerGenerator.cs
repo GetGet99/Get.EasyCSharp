@@ -101,8 +101,8 @@ namespace EasyCSharp.Generator.Generator
                     select $"{(
                                 // Type
                                 x.Item.MatchedParam.methodParam is null ?
-                                type.WithNullableAnnotation(NullableAnnotation.Annotated).ToDisplayString() :
-                                type.ToDisplayString()
+                                type.WithNullableAnnotation(NullableAnnotation.Annotated).FullName() :
+                                type.FullName()
                             )} {(
                                 // Name
                                 x.Item.MatchedParam.methodParam is null ?
@@ -125,7 +125,7 @@ namespace EasyCSharp.Generator.Generator
                     /// <inheritdoc cref="{{method.ToDisplayString()}}"/>
                     /// </summary>
                     {{AgressiveInline}}
-                    {{Front}} {{method.ReturnType}} {{EventName}}({{EventParameters}}) {
+                    {{Front}} {{method.ReturnType.FullName()}} {{EventName}}({{EventParameters}}) {
                         {{method.Name}}({{CallParameters}});
                     }
                     """;
