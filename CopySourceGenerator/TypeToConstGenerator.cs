@@ -57,7 +57,7 @@ public class TypeToConst : GeneratorBase<ClassAttributeSyntaxReceiver>
                             ClassSymbol.TypeParameters.Length == 0 ? "" :
                             $"<{string.Join(", ", from x in ClassSymbol.TypeParameters select x.Name)}>"
                         )}} {
-                                {{string.Join("\r\n\r\n",
+                                {{string.Join($"{Extension.InSourceNewLine}{Extension.InSourceNewLine}",
                                         from attribute in attributes
                                         select $"const string {attribute.MemberName} = \"{attribute.Type.ToDisplayString()}\";".Indent(3)
                                     )}}

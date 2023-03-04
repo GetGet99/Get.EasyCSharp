@@ -37,9 +37,7 @@ namespace EasyCSharp.Generator.Generator
         
         protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, EventAttributeWarpper[] attributeData)
         {
-            return string.Join("\r\n",
-                GetCode(symbol, attributeData, genContext.SemanticModel.Compilation)
-            );
+            return GetCode(symbol, attributeData, genContext.SemanticModel.Compilation).JoinNewLine();
         }
         IEnumerable<string> GetCode(IMethodSymbol method, EventAttributeWarpper[] attributeDatas, Compilation compilation)
         {

@@ -47,9 +47,15 @@ public partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSy
                             $"<{string.Join(", ", from x in @class.TypeParameters select x.Name)}>"
                         )}}
                     {
-                        {{string.Join("\r\n\r\n",
-                            ProcessAttributes(@class.GetAttributes(), AddAttributeSymbol, TypeSymbol, INamedTypeSymbolSymbol, AttributeSymbol)
-                        ).IndentWOF(2)}}
+                        {{
+                            ProcessAttributes(
+                                @class.GetAttributes(),
+                                AddAttributeSymbol,
+                                TypeSymbol,
+                                INamedTypeSymbolSymbol,
+                                AttributeSymbol
+                            ).JoinDoubleNewLine().IndentWOF(2)
+                        }}
                     }
                 }
                 """);
@@ -125,10 +131,10 @@ public partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSy
                     0 => "// No Constructor",
                     1 =>
                         TypeConstructors[0].Parameters.Length == 0 ? "// No Parameters" :
-                        string.Join("\r\n\r\n",
+                        (
                             from param in TypeConstructors[0].Parameters
                             select
-                               $$"""
+                                $$"""
                                 /// <summary>
                                 /// <see cref="{{TypeConstructors[0]}}"/>
                                 /// </summary>
@@ -137,7 +143,7 @@ public partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSy
                                                 $"({ProcessTypeSymbol(param.Type)}){param.ExplicitDefaultValue}"
                                             )};" : "")}}
                                 """
-                            ).IndentWOF(1),
+                        ).JoinDoubleNewLine().IndentWOF(1),
                     >1 => "// Warning: There are more than 1 constructors, and it is not yet supported",
                     _ => "// Warning: There is less than 0 constructors. Wait what?"
                 }}}

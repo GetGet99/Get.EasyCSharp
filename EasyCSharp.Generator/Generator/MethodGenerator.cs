@@ -44,9 +44,9 @@ namespace EasyCSharp.Generator.Generator
         
         protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, IMethodGeneratorAttributeWarpper[] attributeData)
         {
-            return string.Join("\r\n",
+            return
                 GetCode(symbol, attributeData, genContext.SemanticModel.Compilation)
-            );
+                .JoinNewLine();
         }
         IEnumerable<string> GetCode(IMethodSymbol method, IMethodGeneratorAttributeWarpper[] attributeDatas, Compilation compilation)
         {
@@ -89,10 +89,10 @@ namespace EasyCSharp.Generator.Generator
                 var CallExpression = $"""
                     {method.Name}(
                         {
-                            string.Join(",\r\n",
+                            (
                                 from x in output
                                 select $"{x.OriginalName}: {x.Converter}"
-                            ).IndentWOF(1)
+                            ).JoinNewLine().IndentWOF(1)
                         }
                     );
                     """;

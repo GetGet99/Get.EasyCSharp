@@ -57,10 +57,10 @@ public class CopySourceCode : GeneratorBase<ClassAttributeSyntaxReceiver>
                             ClassSymbol.TypeParameters.Length == 0 ? "" :
                             $"<{string.Join(", ", from x in ClassSymbol.TypeParameters select x.Name)}>"
                         )}} {
-                                {{string.Join("\r\n\r\n",
+                                {{string.Join($"{Extension.InSourceNewLine}{Extension.InSourceNewLine}",
                                         from attribute in attributes
-                                        select $"const string {attribute.MemberName} = \"\"\"\"\"\"\"\"\"\"\r\n" +
-                                        $"{attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}\r\n\"\"\"\"\"\"\"\"\"\";".Indent(3)
+                                        select $"const string {attribute.MemberName} = \"\"\"\"\"\"\"\"\"\"{Extension.InSourceNewLine}" +
+                                        $"{attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}{Extension.InSourceNewLine}\"\"\"\"\"\"\"\"\"\";".Indent(3)
                                     )}}
                             }
                         }
@@ -76,10 +76,15 @@ public class CopySourceCode : GeneratorBase<ClassAttributeSyntaxReceiver>
 }
 static partial class Extension
 {
+    public static readonly string InSourceNewLine =
+        """
+        a
+        b
+        """[1..^1];
     public static string Indent(this string Original, int IndentTimes = 1, int IndentSpace = 4)
     {
         var Indent = new string(' ', IndentSpace * IndentTimes);
-        var slashNindent = $"\r\n{Indent}";
-        return Indent + Original.Replace("\r\n", slashNindent);
+        var slashNindent = $"{InSourceNewLine}{Indent}";
+        return Indent + Original.Replace(InSourceNewLine, slashNindent);
     }
 }

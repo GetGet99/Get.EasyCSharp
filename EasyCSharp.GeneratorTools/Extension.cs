@@ -13,21 +13,26 @@ namespace EasyCSharp.GeneratorTools
 {
     static class Extension
     {
+        public static readonly string InSourceNewLine =
+            """
+            a
+            b
+            """[1..^1];
         public static string Indent(this string Original, int IndentTimes = 1, int IndentSpace = 4)
         {
             var Indent = new string(' ', IndentSpace * IndentTimes);
-            var slashNindent = $"\r\n{Indent}";
-            return Indent + Original.Replace("\r\n", slashNindent);
+            var slashNindent = $"{InSourceNewLine}{Indent}";
+            return Indent + Original.Replace(InSourceNewLine, slashNindent);
         }
         public static string JoinNewLine(this IEnumerable<string> Original)
-            => string.Join("\r\n", Original);
+            => string.Join(InSourceNewLine, Original);
         public static string JoinDoubleNewLine(this IEnumerable<string> Original)
-            => string.Join("\r\n\r\n", Original);
+            => string.Join($"{InSourceNewLine}{InSourceNewLine}", Original);
         public static string IndentWOF(this string Original, int IndentTimes = 1, int IndentSpace = 4)
         {
             var Indent = new string(' ', IndentSpace * IndentTimes);
-            var slashNindent = $"\r\n{Indent}";
-            return Original.Replace("\r\n", slashNindent);
+            var slashNindent = $"{InSourceNewLine}{Indent}";
+            return Original.Replace(InSourceNewLine, slashNindent);
         }
         public static IEnumerable<(uint Index, T Item)> Enumerate<T>(this IEnumerable<T> TEnu)
         {

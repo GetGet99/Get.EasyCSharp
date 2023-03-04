@@ -100,7 +100,7 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
             $"""
             // This Generator took {EntireProcess.TotalMilliseconds}ms ({EntireProcess.Ticks} ticks) in total
             // SubProcess took {SubProcess.TotalMilliseconds}ms ({SubProcess.Ticks} ticks)
-            """ + "\r\n" +
+            """ + Extension.InSourceNewLine +
 #endif
             $$"""
             #nullable enable
