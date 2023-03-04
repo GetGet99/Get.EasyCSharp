@@ -137,6 +137,7 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        System.Diagnostics.Debugger.Break();
         context.RegisterPostInitializationOutput(Initialize);
         var output = context.SyntaxProvider.CreateSyntaxProvider(
             static (syntaxNode, cancelationToken) => syntaxNode is TSyntaxNode,

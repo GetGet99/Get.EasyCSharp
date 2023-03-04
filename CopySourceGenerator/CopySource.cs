@@ -51,7 +51,7 @@ public class CopySourceCode : GeneratorBase<ClassAttributeSyntaxReceiver>
                 ).ToArray();
                 if (attributes.Length > 0)
                 {
-                    context.AddSource($"{ClassSymbol}.CopySourceGenerated.g.cs", $$"""
+                    context.AddSource($"{ClassSymbol.ContainingNamespace}.{ClassSymbol.Name}.CopySourceGenerated.g.cs", $$"""
                         namespace {{ClassSymbol.ContainingNamespace}} {
                             partial {{ClassSymbol.TypeKind.ToString().ToLower()}} {{ClassSymbol.Name}}{{(
                             ClassSymbol.TypeParameters.Length == 0 ? "" :
