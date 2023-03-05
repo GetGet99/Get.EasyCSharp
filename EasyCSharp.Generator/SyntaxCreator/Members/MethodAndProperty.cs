@@ -61,6 +61,7 @@ class Property : IMember
     public FullType PropertyType { get; }
     public SyntaxVisibility Visibility { get; }
     public IDocumentation? Documentation { get; }
+    public bool Override { get; set; } = false;
     public Parts Get { get; } = new("get");
     public Parts Set { get; } = new("set");
 
@@ -70,12 +71,22 @@ class Property : IMember
     {
         if (Visibility.GetString() is string s)
             yield return s;
+        if (Override)
+            yield return "override";
+    }
+
+    protected virtual IEnumerable<string> GetDeclaration()
+    {
+        foreach (var kw in GetKeywords())
+            yield return kw;
+        yield return PropertyType.StringRepresentaion;
+        yield return Name;
     }
     public override string ToString()
     {
         return $$"""
                 {{Documentation?.StringRepresentaion ?? "// No Documentation was provided"}}
-                {{GetKeywords().JoinWith(" ")}} {{PropertyType}} {{Name}} {
+                {{GetDeclaration().JoinWith(" ")}} {
                     {{
                         Array(Get, Set)
                         .Where(static x => x.IsGenerating)

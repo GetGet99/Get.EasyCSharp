@@ -8,6 +8,8 @@ using EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using CopySourceGenerator;
+using static EasyCSharp.Generator.Generator.MethodGenerator;
+
 namespace EasyCSharp.Generator.Generator
 {
     [CopySource("EventSource", typeof(EventAttribute))]
@@ -26,7 +28,7 @@ namespace EasyCSharp.Generator.Generator
         static readonly string MethodImplAttr = typeof(System.Runtime.CompilerServices.MethodImplAttribute).FullName;
         static readonly string AggressiveInliningValue = $"{typeof(System.Runtime.CompilerServices.MethodImplOptions).FullName}.{nameof(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)}";
         
-        protected override void Initialize(IncrementalGeneratorPostInitializationContext context)
+        protected override void OnInitialize(IncrementalGeneratorPostInitializationContext context)
         {
             context.AddSource($"{typeof(EventAttribute).FullName}.g.cs", EventSource);
             context.AddSource($"{typeof(CastFromAttribute).FullName}.g.cs", CastFromSource);
@@ -35,13 +37,13 @@ namespace EasyCSharp.Generator.Generator
         protected override EventAttributeWarpper TransformAttribute(AttributeData attributeData, Compilation compilation)
             => AttributeDataToEventAttribute(attributeData, compilation);
         
-        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, EventAttributeWarpper[] attributeData)
+        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, (AttributeData Original, EventAttributeWarpper Wrapper)[] attributeData)
         {
             return GetCode(symbol, attributeData, genContext.SemanticModel.Compilation).JoinNewLine();
         }
-        IEnumerable<string> GetCode(IMethodSymbol method, EventAttributeWarpper[] attributeDatas, Compilation compilation)
+        IEnumerable<string> GetCode(IMethodSymbol method, (AttributeData Original, EventAttributeWarpper Wrapper)[] attributeDatas, Compilation compilation)
         {
-            foreach (var attr in attributeDatas) {
+            foreach (var (_, attr) in attributeDatas) {
                 var visiblity = GetVisiblityPrefix(
                     method.DeclaredAccessibility.ToString().ToLower(),
                     attr.Visibility

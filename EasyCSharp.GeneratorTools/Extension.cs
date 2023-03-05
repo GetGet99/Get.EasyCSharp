@@ -45,12 +45,18 @@ namespace EasyCSharp.GeneratorTools
             if (Value is T CastedValue) return CastedValue;
             else return DefaultValue;
         }
+        static SymbolDisplayFormat full = new(
+            globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
+            typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
+            genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters | SymbolDisplayGenericsOptions.IncludeTypeConstraints | SymbolDisplayGenericsOptions.IncludeVariance,
+            miscellaneousOptions: SymbolDisplayMiscellaneousOptions.ExpandNullable | SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes
+        );
         public static string FullName(this ITypeSymbol Symbol)
         {
-            if (Symbol.ToString().Contains('.'))
-                return $"global::{Symbol}";
-            else
-                return Symbol.ToString();
+            //if (Symbol.ToString().Contains('.'))
+            //    return $"global::{Symbol.ToDisplayString(full)}";
+            //else
+            return Symbol.ToDisplayString(full);
         }
         public static T GetProperty<T>(this AttributeData attribute, string AttributeName, T defaultValue)
         {
@@ -85,6 +91,10 @@ namespace EasyCSharp.GeneratorTools
             if (Type is null) return false;
             if (Type.Equals(PotentialBaseType, SymbolEqualityComparer.Default)) return true;
             return Type.BaseType.IsSubclassFrom(PotentialBaseType);
+        }
+        public static bool IsTheSameAs(this ITypeSymbol? Type, ITypeSymbol? PotentialBaseType)
+        {
+            return Type?.Equals(PotentialBaseType, SymbolEqualityComparer.Default) ?? false;
         }
         //public static T GetConstructor<T>(this AttributeData attribute, int index, T? defaultValue = default)
         //{

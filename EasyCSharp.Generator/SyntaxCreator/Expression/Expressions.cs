@@ -43,4 +43,10 @@ record struct MethodCall(string MethodName, IEnumerable<CallParameter> Parameter
     public ILine EndLine() => new CustomLine($"{StringRepresentaion};");
 }
 
-record struct CustomExpression(string StringRepresentaion) : IExpression { }
+record struct CustomExpression(string StringRepresentaion) : IExpression {
+    public override string ToString() => StringRepresentaion;
+}
+static class Expressions
+{
+    public static IExpression This => new CustomExpression("this");
+}

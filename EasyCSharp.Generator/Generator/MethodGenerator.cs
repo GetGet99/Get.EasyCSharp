@@ -29,7 +29,7 @@ namespace EasyCSharp.Generator.Generator
         static readonly string MethodImplAttr = typeof(System.Runtime.CompilerServices.MethodImplAttribute).FullName;
         static readonly string AggressiveInliningValue = $"{typeof(System.Runtime.CompilerServices.MethodImplOptions).FullName}.{nameof(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)}";
         
-        protected override void Initialize(IncrementalGeneratorPostInitializationContext context)
+        protected override void OnInitialize(IncrementalGeneratorPostInitializationContext context)
         {
             context.AddSource($"EasyCSharp.MethodGeneratorAttributes.g.cs", MethodGeneratorAttributes);
         }
@@ -42,13 +42,13 @@ namespace EasyCSharp.Generator.Generator
                 _ => null
             };
         
-        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, IMethodGeneratorAttributeWarpper[] attributeData)
+        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, (AttributeData Original, IMethodGeneratorAttributeWarpper Wrapper)[] attributeData)
         {
             return
                 GetCode(symbol, attributeData, genContext.SemanticModel.Compilation)
                 .JoinNewLine();
         }
-        IEnumerable<string> GetCode(IMethodSymbol method, IMethodGeneratorAttributeWarpper[] attributeDatas, Compilation compilation)
+        IEnumerable<string> GetCode(IMethodSymbol method, (AttributeData Original, IMethodGeneratorAttributeWarpper Wrapper)[] attributeDatas, Compilation compilation)
         {
             foreach (var attrs in attributeDatas.AllCombinations()) {
                 if (attrs.Length == 0) continue; // We should not generate the original method.
@@ -61,7 +61,7 @@ namespace EasyCSharp.Generator.Generator
                     select
                         (
                             from attr in attrs
-                            select attr switch
+                            select attr.Wrapper switch
                             {
                                 OptionalParameterAttributeWarpper op =>
                                     x.Name == op.ParameterName ?

@@ -9,9 +9,9 @@ interface IType : IMember
 {
 
 }
-record struct FullType(string TypeWithNamespace, bool CanBeNull = false) : ISyntax {
+record struct FullType(string TypeWithNamespace, bool Nullable = false) : ISyntax {
     static FullType Void = new("void");
-    public FullType(INamedTypeSymbol typeSymbol) : this(typeSymbol.FullName(), typeSymbol.NullableAnnotation == NullableAnnotation.Annotated) { }
+    public FullType(ITypeSymbol typeSymbol) : this(typeSymbol.FullName(), typeSymbol.NullableAnnotation == NullableAnnotation.Annotated) { }
 
     public string StringRepresentaion => ToString();
 

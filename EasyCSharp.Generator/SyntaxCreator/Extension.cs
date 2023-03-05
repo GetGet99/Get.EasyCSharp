@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace EasyCSharp.GeneratorTools.SyntaxCreator;
@@ -37,6 +38,10 @@ static partial class Extension
         var value = valuesCreator();
         if (value is not null)
             collection.Add(value);
+    }
+    public static void Add<T>(this T collection, Action<T> valuesCreator) where T : ICollection
+    {
+        valuesCreator(collection);
     }
     /// <summary>
     /// Allias helper for newer syntax

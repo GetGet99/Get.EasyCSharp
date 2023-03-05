@@ -1,120 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
+using System.Security;
 using System.Text;
 using EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 using CopySourceGenerator;
+using EasyCSharp.GeneratorTools.SyntaxCreator;
+using EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+using EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
+using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+using EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
+using System.Diagnostics;
+
 namespace EasyCSharp;
+
 [AddAttributeConverter(typeof(PropertyAttribute))]
-partial class PropertyGeneratorBase<T> : GeneratorBase<FieldAttributeSyntaxReceiver> where T : PropertyAttribute
-{   
-    protected override FieldAttributeSyntaxReceiver ConstructSyntaxReceiver()
-        => new(typeof(T).FullName);
+partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
+    T,
+    PropertyGeneratorBase<T>.PropertyAttributeWarpper,
+    FieldDeclarationSyntax,
+    IFieldSymbol
+>
+    where T : PropertyAttribute
+{
+    protected override bool CountAttributeSubclass => false;
 
-    protected override void OnExecute(GeneratorExecutionContext context, FieldAttributeSyntaxReceiver SyntaxReceiver)
+    protected override PropertyAttributeWarpper TransformAttribute(AttributeData attributeData, Compilation compilation)
     {
-        foreach
-            (
-                var FieldSymbols in
-                SyntaxReceiver.Fields
-                .GroupBy<IFieldSymbol, INamedTypeSymbol>
-                (f => f.ContainingType, SymbolEqualityComparer.Default)
-            )
+        return AttributeDataToPropertyAttribute(attributeData, compilation);
+    }
+
+    protected override string? OnPointVisit(GeneratorSyntaxContext genContext, FieldDeclarationSyntax syntaxNode, IFieldSymbol symbol, (AttributeData Original, PropertyAttributeWarpper Wrapper)[] attributeData)
+    {
+        return GetCode(symbol, attributeData, genContext.SemanticModel.Compilation).JoinNewLine();
+    }
+
+    IEnumerable<string> GetCode(IFieldSymbol field, (AttributeData Original, PropertyAttributeWarpper Wrapper)[] attributeDatas, Compilation compilation)
+    {
+        foreach (var(originalattr, attr) in attributeDatas)
         {
-            var ClassSymbol = FieldSymbols.Key;
-            context.AddSource(FileNameOverride($"{ClassSymbol.ContainingNamespace}.{ClassSymbol.Name}"), $$"""
-                #nullable enable
-                using System.Runtime.CompilerServices;
-                namespace {{ClassSymbol.ContainingNamespace}}
+            if (attr.Visibility is GeneratorVisibility.DoNotGenerate) continue;
+            var propertyName = ChooseName(field.Name, attr.PropertyName);
+            yield return new Property(GetSyntaxVisiblity(attr.Visibility), new(field.Type), propertyName)
+            {
+                Override = attr.OverrideKeyword,
+                Get =
                 {
-                    partial class {{ClassSymbol.Name}}{{ClassHeadLogic(context, ClassSymbol)}}
+                    Visibility = GetSyntaxVisiblity(attr.GetVisibility),
+                    Attributes =
                     {
-                        // Pregenerate Logic For Subclass Generator Override
-                        {{PreGeneratorRun(ClassSymbol, context).IndentWOF(1)}}
-
-                        {{
-                            (
-                                from field in FieldSymbols
-                                select (
-                                    from attribute in field.GetAttributes()
-                                    let attr = AttributeDataToPropertyAttribute(attribute, context.Compilation)
-                                    let PropertyName = ChooseName(field.Name, attr.PropertyName)
-                                    let InlineText = attr.AgressiveInline ? "[MethodImpl(MethodImplOptions.AggressiveInlining)]" : "// Inline is false"
-                                    select
-                                    attr.Visibility is GeneratorVisibility.DoNotGenerate ?
-                                    $"// {field.ToDisplayString()} has Property's Visibility set to {GeneratorVisibility.DoNotGenerate}" :
-                                    $$"""
-                                    // Generated For {{field.ToDisplayString()}}
-
-                                    // BeforePropertyLogic for Overridden class
-                                    {{BeforePropertyLogic(context, field, PropertyName, attribute)}}
-
-                                    /// <summary>
-                                    /// <inheritdoc cref="{{field.ToDisplayString()}}"/>
-                                    /// </summary>
-                                    {{
-                                        GetVisiblity(attr.Visibility)
-                                    }}{{
-                                        (attr.OverrideKeyword ? "override " : "")
-                                    }}{{(attr.CustomType ?? field.Type).FullName()}} {{PropertyName}} {
-                                        
-                                        {{( // Get
-                                            attr.GetVisibility is GeneratorVisibility.DoNotGenerate ? "// Get is not generated according to the attribute" :
-                                            $$"""
-                                            {{InlineText}}
-                                            {{GetVisiblity(attr.GetVisibility)}}get {
-                                                // General Get logic
-                                                return {{GetCustomLogicOverride(field, PropertyName, attr.CustomGetExpression ?? $"{field.Name}")}};
-                                            }
-                                            """.IndentWOF(1)
-                                        )}}
-                                        {{( // Set
-                                            attr.SetVisibility is GeneratorVisibility.DoNotGenerate ? "// Set is not generated according to the attribute" :
-                                            $$"""
-                                            {{InlineText}}
-                                            {{GetVisiblity(attr.SetVisibility)}}set {
-                                                // User Defined OnBeforeChanged attribute
-                                                {{(attr.OnBeforeChanged is null ? "// OnChanged is not set" : $"{attr.OnBeforeChanged}();")}}
-                                                
-                                                // General Set logic
-                                                {{field.Name}} = {{attr.CustomSetExpression ?? "value"}};
-                                                
-                                                // OnSet Logic For Subclass Generator Override
-                                                {{OnSet(field, PropertyName, attribute).IndentWOF(1)}}
-                                                
-                                                // User Defined OnChanged attribute
-                                                {{(attr.OnChanged is null ? "// OnChanged is not set" : $"{attr.OnChanged}();")}}
-                                            }
-                                            """.IndentWOF(1)
-                                        )}}
-                                    }
-                                    
-                                    // End Generated For {{field.ToDisplayString()}}
-                                    """
-                                    ).JoinDoubleNewLine()
-                            ).JoinDoubleNewLine().IndentWOF(2)
-
-                        //
-                        }}
+                        () => attr.AgressiveInline ?
+                            new CustomAttribute("[MethodImpl(MethodImplOptions.AggressiveInlining)]") :
+                            null
+                    },
+                    Code =
+                    {
+                        new Return(new Variable(attr.CustomGetExpression ?? field.Name))
+                    }
+                },
+                Set =
+                {
+                    Visibility = GetSyntaxVisiblity(attr.SetVisibility),
+                    Attributes =
+                    {
+                        () => attr.AgressiveInline ?
+                            new CustomAttribute("[MethodImpl(MethodImplOptions.AggressiveInlining)]") :
+                            null
+                    },
+                    Code =
+                    {
+                        new Assign(new(field.Name), new CustomExpression(attr.CustomSetExpression ?? "value")).EndLine(),
+                        () => attr.OnChanged is not null ? new MethodCall(attr.OnChanged).EndLine() : null,
+                        list => OnSet(list, field, propertyName, originalattr)
                     }
                 }
-                """);
+            }.StringRepresentaion;
         }
+        yield break;
     }
-    protected virtual string GetCustomLogicOverride(IFieldSymbol FieldSymbol, string PropertyName, string Original) => Original;
-    protected virtual string FileNameOverride(string ClassName) => $"{ClassName}.GeneratedProperty.g.cs";
-    protected virtual string ClassHeadLogic(GeneratorExecutionContext context, INamedTypeSymbol classSymbol) => "";
-    protected virtual string BeforePropertyLogic(GeneratorExecutionContext context, IFieldSymbol fieldSymbol, string PropertyName, AttributeData attributeData) => "// BeforePropertyLogic Not Overrideen";
-    protected virtual string OnSet(IFieldSymbol FieldSymbol, string PropertyName, AttributeData attributeData) => "// OnSet Not Overriden";
-    protected virtual string PreGeneratorRun(INamedTypeSymbol classSymbol, GeneratorExecutionContext context)
-        => "// PreGeneratorRun Not Overridden";
-
+    protected virtual void OnSet(LinkedList<ILine> Lines, IFieldSymbol symbol, string PropertyName, AttributeData data) { }
+    static string? GetVisiblityPrefix(string DefaultPrefix, GeneratorVisibility propertyVisibility)
+        => propertyVisibility switch
+        {
+            GeneratorVisibility.Default => DefaultPrefix,
+            GeneratorVisibility.DoNotGenerate => null,
+            GeneratorVisibility.Public => $"public",
+            GeneratorVisibility.Private => $"private",
+            GeneratorVisibility.Protected => $"protected",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    static SyntaxVisibility GetSyntaxVisiblity(GeneratorVisibility propertyVisibility)
+        => propertyVisibility switch
+        {
+            GeneratorVisibility.Default => SyntaxVisibility.Default,
+            GeneratorVisibility.DoNotGenerate => SyntaxVisibility.DoNotGenerate,
+            GeneratorVisibility.Public => SyntaxVisibility.Public,
+            GeneratorVisibility.Private => SyntaxVisibility.Private,
+            GeneratorVisibility.Protected => SyntaxVisibility.Protected,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     static string ChooseName(string fieldName, string? overridenNameOpt)
     {
         if (overridenNameOpt is not null) return overridenNameOpt;
@@ -128,14 +115,10 @@ partial class PropertyGeneratorBase<T> : GeneratorBase<FieldAttributeSyntaxRecei
 
         return fieldName.Substring(0, 1).ToUpper() + fieldName.Substring(1);
     }
-    static string? GetVisiblity(GeneratorVisibility propertyVisibility)
-        => propertyVisibility switch
-        {
-            GeneratorVisibility.Default => "",
-            GeneratorVisibility.DoNotGenerate => null,
-            GeneratorVisibility.Public => $"public ",
-            GeneratorVisibility.Private => $"private ",
-            GeneratorVisibility.Protected => $"protected ",
-            _ => throw new ArgumentOutOfRangeException()
-        };
+    protected override IEnumerable<IFieldSymbol> GetSymbols(GeneratorSyntaxContext genContext, FieldDeclarationSyntax syntaxNode)
+    {
+        foreach (var variable in syntaxNode.Declaration.Variables)
+            if (genContext.SemanticModel.GetDeclaredSymbol(variable) is IFieldSymbol symbol)
+                yield return symbol;
+    }
 }

@@ -9,7 +9,9 @@
 		<Compile Remove="Generator\CustomGeneratorGenerator.cs" />
 		<Compile Remove="Generator\OldEventHandlerGenerator.cs" />
 		<Compile Remove="Generator\PropertyGenerator\NullablePropertyWrapperGenerator.cs" />
+		<Compile Remove="Generator\PropertyGenerator\PropertyGenerator.Old.cs" />
 		<Compile Remove="Generator\PropertyGenerator\PropertyGeneratorBase.Old.cs" />
+		<Compile Remove="Generator\PropertyGenerator\PropertyGeneratorBase.Old.Old.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" PrivateAssets="all" />
