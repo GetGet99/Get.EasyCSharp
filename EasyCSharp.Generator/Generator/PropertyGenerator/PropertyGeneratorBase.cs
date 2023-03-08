@@ -88,7 +88,7 @@ partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
                                 );
                                 x.AddLast(new CustomLine(
                                     $"""
-                                    if (!({methodCall})) return;
+                                    if ({methodCall}) return;
                                     """
                                 ));
                             }
