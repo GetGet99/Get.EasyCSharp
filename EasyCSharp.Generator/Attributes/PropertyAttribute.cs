@@ -55,4 +55,22 @@ class PropertyAttribute : Attribute
     /// Visibility of "set" part, default means do not add the visiblity
     /// </summary>
     public GeneratorVisibility SetVisibility { get; set; } = GeneratorVisibility.Default;
+    /// <summary>
+    /// Checks whether the element has changed before continuing with any logic
+    /// </summary>
+    public bool CheckForChanges { get; set; } = true;
+    /// <summary>
+    /// Whether to use <see cref="object.ReferenceEquals(object, object)"/> or <see cref="global::System.Collections.Generic.EqualityComparer{T}.Equals(T, T)"/> comparision (True = Reference)
+    /// If null, Comparing Value Type uses Equals and Comparing Reference Type uses ReferenceEquals.
+    /// If <seealso cref="CustomComparisonCodeForChanges"/> is not null, this property does nothing
+    /// </summary>
+    // use false instead of null 1. because string and 2. mostly it's the same anyway if object.Equals is not overridden
+    public bool? ReferenceCompareForChanges { get; set; } = false;
+    
+    
+    /// <summary>
+    /// Set custom comparison code for changes
+    /// </summary>
+    public string? CustomComparisonCodeForChanges { get; set; } = null;
+
 }

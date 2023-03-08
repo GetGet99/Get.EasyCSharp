@@ -60,7 +60,7 @@ class Property : IMember
     public string Name { get; }
     public FullType PropertyType { get; }
     public SyntaxVisibility Visibility { get; }
-    public IDocumentation? Documentation { get; }
+    public IDocumentation? Documentation { get; set; }
     public bool Override { get; set; } = false;
     public Parts Get { get; } = new("get");
     public Parts Set { get; } = new("set");

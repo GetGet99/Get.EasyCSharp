@@ -37,7 +37,6 @@ partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
     {
         return GetCode(symbol, attributeData, genContext.SemanticModel.Compilation).JoinNewLine();
     }
-
     IEnumerable<string> GetCode(IFieldSymbol field, (AttributeData Original, PropertyAttributeWarpper Wrapper)[] attributeDatas, Compilation compilation)
     {
         foreach (var(originalattr, attr) in attributeDatas)
@@ -46,6 +45,13 @@ partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
             var propertyName = ChooseName(field.Name, attr.PropertyName);
             yield return new Property(GetSyntaxVisiblity(attr.Visibility), new(field.Type), propertyName)
             {
+                Documentation = new CustomDocumentation(
+                    $"""
+                    /// <summary>
+                    /// <inheritdoc cref="{field.Name}"/>
+                    /// </summary>
+                    """
+                ),
                 Override = attr.OverrideKeyword,
                 Get =
                 {
@@ -72,6 +78,21 @@ partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
                     },
                     Code =
                     {
+                        x => {
+                            if (attr.CheckForChanges)
+                            {
+                                var methodCall = attr.CustomComparisonCodeForChanges ??
+                                (
+                                    attr.ReferenceCompareForChanges ?? !field.Type.IsValueType ?
+                                    $"object.ReferenceEquals({field.Name}, value)" : $"global::System.Collections.Generic.EqualityComparer<{field.Type.FullName()}>.Default.Equals({field.Name}, value)"
+                                );
+                                x.AddLast(new CustomLine(
+                                    $"""
+                                    if (!({methodCall})) return;
+                                    """
+                                ));
+                            }
+                        },
                         new Assign(new(field.Name), new CustomExpression(attr.CustomSetExpression ?? "value")).EndLine(),
                         () => attr.OnChanged is not null ? new MethodCall(attr.OnChanged).EndLine() : null,
                         list => OnSet(list, field, propertyName, originalattr)

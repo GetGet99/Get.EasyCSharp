@@ -20,8 +20,17 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
     where TSymbol : ISymbol
 {
     protected virtual bool CountAttributeSubclass => true;
-    static readonly string FullAttributeName = typeof(TAttribute1).FullName;
-    
+    static readonly string FullAttributeName;
+    static AttributeBaseGenerator()
+    {
+        var fn = typeof(TAttribute1).FullName;
+        //var idx = fn.IndexOf('`');
+        //if (idx != -1) // generic type, we ignore all generic variable
+        //    FullAttributeName = fn[..idx];
+        //else
+        FullAttributeName = fn;
+    }
+
     protected virtual void OnInitialize(IncrementalGeneratorPostInitializationContext context) { }
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -56,7 +65,7 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
 
         // Get Attributes
         var Class = genContext.SemanticModel.Compilation.GetTypeByMetadataName(FullAttributeName);
-        
+
         var attributes = (
             from x in symbols[0].GetAttributes()
             where CountAttributeSubclass ?
@@ -74,7 +83,8 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
         {
             output = (from symbol in symbols select OnPointVisit(genContext, syntaxNode, symbol, attributes)).JoinDoubleNewLine();
             if (output is null) return (null, null);
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             // Log the exception
             output = $"""
@@ -90,7 +100,7 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
         DateTime ProcessCompleted = DateTime.Now;
 #endif
         // All conditions satisfy
-        var containingClass = symbols[0].ContainingType;
+        var containingClass = symbols[0] is INamedTypeSymbol nts ? nts : symbols[0].ContainingType;
         var genericParams = containingClass.TypeParameters;
         var classHeader =
             genericParams.Length is 0 ?

@@ -59,8 +59,13 @@ public class CopySourceCode : GeneratorBase<ClassAttributeSyntaxReceiver>
                         )}} {
                                 {{string.Join($"{Extension.InSourceNewLine}{Extension.InSourceNewLine}",
                                         from attribute in attributes
-                                        select $"const string {attribute.MemberName} = \"\"\"\"\"\"\"\"\"\"{Extension.InSourceNewLine}" +
-                                        $"{attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}{Extension.InSourceNewLine}\"\"\"\"\"\"\"\"\"\";".Indent(3)
+                                        select
+                                        $"""""""""""""""""""""""""
+                                        const string {attribute.MemberName} = """""""""""""""""""""""
+                                        #nullable enable
+                                        {attribute.Type.DeclaringSyntaxReferences[0].SyntaxTree}
+                                        """"""""""""""""""""""";
+                                        """"""""""""""""""""""""".Indent(3)
                                     )}}
                             }
                         }

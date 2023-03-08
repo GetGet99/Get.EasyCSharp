@@ -1,4 +1,5 @@
 ﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+using EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,13 @@ record struct Variable(string VariableName) : IExpression
 record struct Assign(Variable Variable, IExpression Expression) : ILineExpression
 {
     public string StringRepresentaion => $"{Variable} = {Expression}";
+    public override string ToString() => StringRepresentaion;
+    public ILine EndLine() => new CustomLine($"{StringRepresentaion};");
+}
+
+record struct Cast(FullType Type, IExpression Expression) : ILineExpression
+{
+    public string StringRepresentaion => $"({Type}){Expression}";
     public override string ToString() => StringRepresentaion;
     public ILine EndLine() => new CustomLine($"{StringRepresentaion};");
 }
