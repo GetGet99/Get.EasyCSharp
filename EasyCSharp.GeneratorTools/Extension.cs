@@ -97,9 +97,13 @@ namespace EasyCSharp.GeneratorTools
             //else
             NullableReferenceType = NullableReferenceType || Symbol.NullableAnnotation == NullableAnnotation.Annotated;
             if (NullableReferenceType && !Symbol.IsValueType)
-                return Symbol.ToDisplayString(full) + "?";
+                return Symbol.FullNameWithoutAnnotation() + "?";
             else
-                return Symbol.ToDisplayString(full);
+                return Symbol.FullNameWithoutAnnotation();
+        }
+        public static string FullNameWithoutAnnotation(this ITypeSymbol Symbol)
+        {
+            return Symbol.ToDisplayString(full);
         }
         public static T GetProperty<T>(this AttributeData attribute, string AttributeName, T defaultValue)
         {
