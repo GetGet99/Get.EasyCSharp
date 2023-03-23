@@ -44,7 +44,7 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
 
         context.RegisterSourceOutput(output, (sourceProductionContext, value) =>
         {
-            sourceProductionContext.AddSource(value.FileName!, value.Content!);
+            sourceProductionContext.AddSource(value.FileName!.Replace("?", "Nullable"), value.Content!);
         });
     }
     protected abstract TAttributeDataType1? TransformAttribute(AttributeData attributeData, Compilation compilation);

@@ -101,8 +101,8 @@ namespace EasyCSharp.Generator.Generator
                     select $"{(
                                 // Type
                                 x.Item.MatchedParam.methodParam is null ?
-                                type.WithNullableAnnotation(NullableAnnotation.Annotated).FullName() :
-                                type.FullName()
+                                type.WithNullableAnnotation(NullableAnnotation.Annotated).FullName(true) :
+                                type.FullName(type.NullableAnnotation == NullableAnnotation.Annotated)
                             )} {(
                                 // Name
                                 x.Item.MatchedParam.methodParam is null ?
@@ -114,10 +114,9 @@ namespace EasyCSharp.Generator.Generator
                 var CallParameters = string.Join(", ",
                     from x in paramsWithCast
                     select (
-                        x.castFromType is null ? "" : $"({x.methodParam.Type})"
+                        x.castFromType is null ? "" : $"({x.methodParam.Type.FullName()})"
                     ) + x.methodParam.Name
                 );
-
                 // Generate
                 yield return
                     $$"""

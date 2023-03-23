@@ -12,7 +12,7 @@ class EventAttribute : Attribute
 {
     /// <param name="Type">Event Type, must be a <see cref="Delegate"/></param>
 #pragma warning disable IDE0060
-    public EventAttribute(Type Type) { }
+    public EventAttribute(Type Type, bool IsTypeNullable = false) { }
 #pragma warning restore IDE0060
     /// <summary>
     /// The name of the event, <c>null</c> defaults to the same name as the method

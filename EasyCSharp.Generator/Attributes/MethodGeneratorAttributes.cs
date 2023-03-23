@@ -9,7 +9,7 @@ namespace EasyCSharp;
 /// <summary>
 /// Makes an overload without the parameter that calls the method with parameter
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor, AllowMultiple = true, Inherited = false)]
 class OptionalParameterAttribute : MethodGeneratorAttribute
 {
     /// <param name="ParameterName">Parameter Name</param>
@@ -22,7 +22,7 @@ class OptionalParameterAttribute : MethodGeneratorAttribute
 /// <summary>
 /// Makes an overload without the parameter that calls the method with parameter
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor, AllowMultiple = true, Inherited = false)]
 class SubstitudeParameterAttribute : MethodGeneratorAttribute
 {
     /// <param name="ParameterName">Parameter Name</param>

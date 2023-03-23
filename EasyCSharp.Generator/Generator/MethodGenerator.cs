@@ -19,7 +19,7 @@ namespace EasyCSharp.Generator.Generator
     partial class MethodGenerator : AttributeBaseGenerator<
         MethodGeneratorAttribute,
         MethodGenerator.IMethodGeneratorAttributeWarpper,
-        MethodDeclarationSyntax,
+        BaseMethodDeclarationSyntax,
         IMethodSymbol
     >
     {
@@ -42,7 +42,7 @@ namespace EasyCSharp.Generator.Generator
                 _ => null
             };
         
-        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, (AttributeData Original, IMethodGeneratorAttributeWarpper Wrapper)[] attributeData)
+        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, BaseMethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, (AttributeData Original, IMethodGeneratorAttributeWarpper Wrapper)[] attributeData)
         {
             return
                 GetCode(symbol, attributeData, genContext.SemanticModel.Compilation)
@@ -65,7 +65,7 @@ namespace EasyCSharp.Generator.Generator
                             {
                                 OptionalParameterAttributeWarpper op =>
                                     x.Name == op.ParameterName ?
-                                    (OriginalName: x.Name, x.Type, default(string), default(ITypeSymbol), op.ParameterValue?.ToString() ?? "null") :
+                                    (OriginalName: x.Name, x.Type, default(string), default(ITypeSymbol), op.ParameterValue?.ToSyntaxString() ?? "null") :
                                     @default,
                                 SubstitudeParameterAttributeWarpper sub =>
                                 x.Name == sub.ParameterName ?
@@ -86,23 +86,33 @@ namespace EasyCSharp.Generator.Generator
                     select $"{x.NewType} {x.NewName}"
                 );
 
-                var CallExpression = $"""
-                    {method.Name}(
+                var CallExpression =
+                    $"""
+                    {(method.Name is ".ctor" ? "this" : "method.Name")}(
                         {
                             (
                                 from x in output
                                 select $"{x.OriginalName}: {x.Converter}"
                             ).JoinNewLine().IndentWOF(1)
                         }
-                    );
+                    )
                     """;
-
-                yield return $$"""
+                if (method.Name is ".ctor")
+                    yield return $$"""
                     /// <summary>
                     /// <inheritdocs cref="{{method.ToDisplayString()}}" />
                     /// </summary>
-                    {{Front}} {{method.ReturnType}} {{method.Name}}({{ParameterHeader}}) {
+                    {{Front}} {{method.ContainingType.Name}}({{ParameterHeader}}) :
                         {{CallExpression.IndentWOF(1)}}
+                    { }
+                    """;
+                else
+                    yield return $$"""
+                    /// <summary>
+                    /// <inheritdocs cref="{{method.ToDisplayString()}}" />
+                    /// </summary>
+                    {{Front}} {{method.ReturnType.FullName()}} {{method.Name}}({{ParameterHeader}}) {
+                        {{CallExpression.IndentWOF(1)}};
                     }
                     """;
             }

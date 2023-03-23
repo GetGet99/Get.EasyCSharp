@@ -33,6 +33,7 @@ public partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSy
         if (TypeSymbol is null) return;
         if (AttributeSymbol is null) return;
         if (INamedTypeSymbolSymbol is null) return;
+        if (ITypeParameterSymbolSymbol is null) return;
         foreach (var @class in SyntaxReceiver.Classes)
         {
             context.AddSource($"{@class.ContainingNamespace}.{@class.Name}_GeneratedAttributeConverter.g.cs", $$"""
@@ -161,7 +162,7 @@ public partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSy
                                 /// </summary>
                                 public {{ProcessTypeSymbol(param.Type)}} {{param.Name}} { get; set; } {{(param.HasExplicitDefaultValue ? $"= {(
                                                 param.ExplicitDefaultValue is null ? $"default({ProcessTypeSymbol(param.Type)})" :
-                                                $"({ProcessTypeSymbol(param.Type)}){param.ExplicitDefaultValue}"
+                                                $"({ProcessTypeSymbol(param.Type)}){param.ExplicitDefaultValue.ToSyntaxString()}"
                                             )};" : "")}}
                                 """
                         ).JoinDoubleNewLine().IndentWOF(1),

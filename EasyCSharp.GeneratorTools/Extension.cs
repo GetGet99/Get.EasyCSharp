@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
 
 namespace EasyCSharp.GeneratorTools
 {
@@ -28,6 +30,43 @@ namespace EasyCSharp.GeneratorTools
             => string.Join(InSourceNewLine, Original);
         public static string JoinDoubleNewLine(this IEnumerable<string> Original)
             => string.Join($"{InSourceNewLine}{InSourceNewLine}", Original);
+        public static string ToSyntaxString(this object obj)
+        {
+            if (obj is bool booleanValue)
+            {
+                return booleanValue ? "true" : "false";
+            }
+            else if (obj is string stringValue)
+            {
+                var sb = new StringBuilder();
+                sb.Append('"');
+                foreach (char c in stringValue)
+                {
+                    switch (c)
+                    {
+                        case '\\': sb.Append("\\\\"); break;
+                        case '\"': sb.Append("\\\""); break;
+                        case '\n': sb.Append("\\n"); break;
+                        case '\r': sb.Append("\\r"); break;
+                        case '\t': sb.Append("\\t"); break;
+                        case '\0': sb.Append("\\0"); break;
+                        case '\a': sb.Append("\\a"); break;
+                        case '\b': sb.Append("\\b"); break;
+                        case '\f': sb.Append("\\f"); break;
+                        case '\v': sb.Append("\\v"); break;
+                        default: sb.Append(c); break;
+                    }
+                }
+                sb.Append('"');
+                return sb.ToString();
+            }
+            else if (obj.GetType().IsEnum)
+            {
+                return $"{obj.GetType().FullName}.{Enum.GetName(obj.GetType(), obj)}";
+            }
+
+            return obj.ToString();
+        }
         public static string IndentWOF(this string Original, int IndentTimes = 1, int IndentSpace = 4)
         {
             var Indent = new string(' ', IndentSpace * IndentTimes);
@@ -51,12 +90,16 @@ namespace EasyCSharp.GeneratorTools
             genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters | SymbolDisplayGenericsOptions.IncludeTypeConstraints | SymbolDisplayGenericsOptions.IncludeVariance,
             miscellaneousOptions: SymbolDisplayMiscellaneousOptions.ExpandNullable | SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers | SymbolDisplayMiscellaneousOptions.UseSpecialTypes
         );
-        public static string FullName(this ITypeSymbol Symbol)
+        public static string FullName(this ITypeSymbol Symbol, bool NullableReferenceType = false)
         {
             //if (Symbol.ToString().Contains('.'))
             //    return $"global::{Symbol.ToDisplayString(full)}";
             //else
-            return Symbol.ToDisplayString(full);
+            NullableReferenceType = NullableReferenceType || Symbol.NullableAnnotation == NullableAnnotation.Annotated;
+            if (NullableReferenceType && !Symbol.IsValueType)
+                return Symbol.ToDisplayString(full) + "?";
+            else
+                return Symbol.ToDisplayString(full);
         }
         public static T GetProperty<T>(this AttributeData attribute, string AttributeName, T defaultValue)
         {

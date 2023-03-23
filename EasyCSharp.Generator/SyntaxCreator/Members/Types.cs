@@ -1,6 +1,7 @@
 ﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace EasyCSharp.GeneratorTools.SyntaxCreator.Members;
@@ -11,7 +12,7 @@ interface IType : IMember
 }
 record struct FullType(string TypeWithNamespace, bool Nullable = false) : ISyntax {
     static FullType Void = new("void");
-    public FullType(ITypeSymbol typeSymbol) : this(typeSymbol.FullName(), typeSymbol.NullableAnnotation == NullableAnnotation.Annotated) { }
+    public FullType(ITypeSymbol typeSymbol) : this(typeSymbol.FullName()) { }
 
     public string StringRepresentaion => ToString();
 
