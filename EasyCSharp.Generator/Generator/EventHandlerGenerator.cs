@@ -16,16 +16,19 @@ namespace EasyCSharp.Generator.Generator
     [CopySource("CastFromSource", typeof(CastFromAttribute))]
     [AddAttributeConverter(typeof(EventAttribute), ParametersAsString = "default(System.Type)")]
     [AddAttributeConverter(typeof(CastFromAttribute), ParametersAsString = "default(System.Type)")]
+    [AddAttributeConverter(typeof(CastAttribute))]
     [Generator]
-    partial class EventHandlerGenerator : AttributeBaseGenerator<
+    internal partial class EventHandlerGenerator : AttributeBaseGenerator<
         EventAttribute,
         EventHandlerGenerator.EventAttributeWarpper,
         MethodDeclarationSyntax,
         IMethodSymbol
     >
     {
+        static readonly string CastAttr = typeof(CastAttribute).FullName;
         static readonly string CastFromAttr = typeof(CastFromAttribute).FullName;
         static readonly string MethodImplAttr = typeof(System.Runtime.CompilerServices.MethodImplAttribute).FullName;
+        static readonly string ArgumentException = typeof(ArgumentException).FullName;
         static readonly string AggressiveInliningValue = $"{typeof(System.Runtime.CompilerServices.MethodImplOptions).FullName}.{nameof(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)}";
         
         protected override void OnInitialize(IncrementalGeneratorPostInitializationContext context)
@@ -66,25 +69,38 @@ namespace EasyCSharp.Generator.Generator
 
                 var paramsWithCast =
                 (
-                    from methodParam in method.Parameters
-                    let castFromAttr = methodParam.GetAttributes()
-                    .SingleOrDefault(x => x.AttributeClass?.ToDisplayString() == CastFromAttr)
+                    from y in method.Parameters.Enumerate()
+                    let castAttr = y.Item.GetAttributes()
+                    .SingleOrDefault(x =>
+                        x.AttributeClass?.ToDisplayString() == CastFromAttr ||
+                        x.AttributeClass?.ToDisplayString() == CastAttr
+                    )
                     select (
-                        methodParam,
-                        castFromType: castFromAttr is null ? default : AttributeDataToCastFromAttribute(castFromAttr, compilation).Type
+                        Index: y.Index,
+                        methodParam: y.Item,
+                        castFromType: castAttr is null ? default :
+                        
+                        (
+                            castAttr.AttributeClass?.ToDisplayString() == CastFromAttr ?
+                            AttributeDataToCastFromAttribute(castAttr, compilation).Type :
+                            default
+                        ),
+                        cast: castAttr is not null
                     )
                 ).ToArray(); // Evaluate because we use it multiple times
 
                 var annotatedParams =
                 (
-                    from Param in delegateMethod.Parameters
+                    from y in delegateMethod.Parameters.Enumerate()
                     let MatchedParam =
                         paramsWithCast.FirstOrDefault(
                             x =>
-                            (x.castFromType ?? x.methodParam.Type).Equals(Param.Type, SymbolEqualityComparer.Default)
+                            (x.castFromType ?? x.methodParam.Type).Equals(y.Item.Type, SymbolEqualityComparer.Default) ||
+                            (x.cast && x.castFromType is null && x.Index == y.Index)
                         )
-                    select (Param, MatchedParam)
+                    select (Param: y.Item, MatchedParam)
                 ).ToArray();
+
                 var AgressiveInline =
                     attr.AgressiveInline ?
                     // Agressive Inline is on
@@ -93,6 +109,7 @@ namespace EasyCSharp.Generator.Generator
                     "// AgressiveInline is false";
 
                 var Front = $"{visiblity}{(attr.ForceStatic || method.IsStatic ? " static" : "")}";
+                
                 var EventName = attr.Name ?? method.Name;
                 
                 var EventParameters = string.Join(", ",
@@ -110,12 +127,18 @@ namespace EasyCSharp.Generator.Generator
                                 x.Item.MatchedParam.methodParam.Name
                             )}"
                 );
-
                 var CallParameters = string.Join(", ",
                     from x in paramsWithCast
                     select (
-                        x.castFromType is null ? "" : $"({x.methodParam.Type.FullName()})"
-                    ) + x.methodParam.Name
+                        x.cast ? (
+                            x.methodParam.Type.NullableAnnotation is NullableAnnotation.Annotated ?
+                            $"({x.methodParam.Type.FullName()}){x.methodParam.Name}" :
+                            $"({x.methodParam.Name} as {x.methodParam.Type.FullName()} ?? " +
+                            $$"""
+                            throw new {{ArgumentException}}($"The parameter {nameof({{x.methodParam.Name}})} must be of type '{{x.methodParam.Type.FullName()}}' and is not null", nameof({{x.methodParam.Name}})))
+                            """
+                        ) : x.methodParam.Name
+                    )
                 );
                 // Generate
                 yield return
