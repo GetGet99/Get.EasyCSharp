@@ -110,7 +110,7 @@ public abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, T
         TimeSpan EntireProcess = ProcessCompleted - TransformBegin;
         TimeSpan SubProcess = ProcessCompleted - BeforeProcess;
 #endif
-        return ($"{string.Join(" ", symbols)}.g.cs",
+        return ($"{string.Join(" ", from x in symbols select x.ToString().Replace('<','[').Replace('>', ']'))}.g.cs",
 #if DEBUG
             $"""
             // This Generator took {EntireProcess.TotalMilliseconds}ms ({EntireProcess.Ticks} ticks) in total

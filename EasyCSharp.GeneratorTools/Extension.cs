@@ -26,6 +26,8 @@ namespace EasyCSharp.GeneratorTools
             var slashNindent = $"{InSourceNewLine}{Indent}";
             return Indent + Original.Replace(InSourceNewLine, slashNindent);
         }
+        public static string GetEscapedName(this ISymbol symbol)
+            => symbol.Name.StartsWith("@") ? symbol.Name : $"@{symbol.Name}";
         public static string JoinNewLine(this IEnumerable<string> Original)
             => string.Join(InSourceNewLine, Original);
         public static string JoinDoubleNewLine(this IEnumerable<string> Original)

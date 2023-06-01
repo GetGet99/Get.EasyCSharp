@@ -124,7 +124,7 @@ namespace EasyCSharp.Generator.Generator
                                 // Name
                                 x.Item.MatchedParam.methodParam is null ?
                                 $"__{x.Index + 1}" :
-                                x.Item.MatchedParam.methodParam.Name
+                                x.Item.MatchedParam.methodParam.GetEscapedName()
                             )}"
                 );
                 var CallParameters = string.Join(", ",
@@ -132,12 +132,12 @@ namespace EasyCSharp.Generator.Generator
                     select (
                         x.cast ? (
                             x.methodParam.Type.NullableAnnotation is NullableAnnotation.Annotated ?
-                            $"({x.methodParam.Type.FullName()}){x.methodParam.Name}" :
-                            $"({x.methodParam.Name} as {x.methodParam.Type.FullName()} ?? " +
+                            $"({x.methodParam.Type.FullName()}){x.methodParam.GetEscapedName()}" :
+                            $"({x.methodParam.GetEscapedName()} as {x.methodParam.Type.FullName()} ?? " +
                             $$"""
-                            throw new {{ArgumentException}}($"The parameter {nameof({{x.methodParam.Name}})} must be of type '{{x.methodParam.Type.FullName()}}' and is not null", nameof({{x.methodParam.Name}})))
+                            throw new {{ArgumentException}}($"The parameter {nameof({{x.methodParam.GetEscapedName()}})} must be of type '{{x.methodParam.Type.FullName()}}' and is not null", nameof({{x.methodParam.Name}})))
                             """
-                        ) : x.methodParam.Name
+                        ) : x.methodParam.GetEscapedName()
                     )
                 );
                 // Generate
