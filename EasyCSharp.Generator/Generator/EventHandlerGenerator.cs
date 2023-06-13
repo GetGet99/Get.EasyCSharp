@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using CopySourceGenerator;
 using static EasyCSharp.Generator.Generator.MethodGenerator;
+using System.Diagnostics;
 
 namespace EasyCSharp.Generator.Generator
 {
@@ -60,6 +61,8 @@ namespace EasyCSharp.Generator.Generator
                 }
 
                 var delegateMethod = attr.Type.DelegateInvokeMethod;
+                //if (!Debugger.IsAttached)Debugger.Launch();
+                
                 if (delegateMethod is null)
                 {
                     // Error
@@ -114,7 +117,7 @@ namespace EasyCSharp.Generator.Generator
                 
                 var EventParameters = string.Join(", ",
                     from x in annotatedParams.Enumerate()
-                    let type = x.Item.MatchedParam.castFromType ?? x.Item.Param.Type
+                    let type = (x.Item.MatchedParam.castFromType ?? x.Item.Param.Type).WithNullableAnnotation(x.Item.Param.NullableAnnotation)
                     select $"{(
                                 // Type
                                 x.Item.MatchedParam.methodParam is null ?
