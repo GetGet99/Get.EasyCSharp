@@ -1,8 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<Version>1.0.0</Version>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
 		<Nullable>enable</Nullable>
+		<RepositoryUrl>https://github.com/Get0457/EasyCSharp/tree/master</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<IncludeSymbols>True</IncludeSymbols>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Authors>Get</Authors>
+		<PackageOutputPath>..\Package</PackageOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Include="..\EasyCSharp.Types\AutoNotifyPropertyAttribute.cs" Link="AutoNotifyPropertyAttribute.cs" />
@@ -14,5 +21,17 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CopySourceGenerator\CopySourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\EasyCSharp.GeneratorTools\EasyCSharp.GeneratorTools.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 </Project>

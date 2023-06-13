@@ -1,4 +1,5 @@
 ﻿using EasyCSharp;
+using EasyCSharp.GeneratorTools;
 
 namespace EasyCSharpTester
 {
@@ -15,8 +16,7 @@ namespace EasyCSharpTester
 
         public void Proc()
         {
-            TestProperty1 = true;
-            //Test2.
+            Proc()
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EasyCSharp.Generator;
 
-public abstract class GeneratorBase<T> : ISourceGenerator where T : ISyntaxContextReceiver
+abstract class GeneratorBase<T> : ISourceGenerator where T : ISyntaxContextReceiver
 {
     protected abstract T ConstructSyntaxReceiver();
     public void Initialize(GeneratorInitializationContext context)

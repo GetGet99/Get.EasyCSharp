@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace EasyCSharp.Generator;
 
-public class FieldAttributeSyntaxReceiver : ISyntaxContextReceiver
+class FieldAttributeSyntaxReceiver : ISyntaxContextReceiver
 {
     readonly string Type;
     public FieldAttributeSyntaxReceiver(string Type)
@@ -57,7 +57,7 @@ class PropertyAttributeSyntaxReceiver : ISyntaxContextReceiver
         }
     }
 }
-public class MethodAttributeSyntaxReceiver : ISyntaxContextReceiver
+class MethodAttributeSyntaxReceiver : ISyntaxContextReceiver
 {
     readonly string Type;
     public MethodAttributeSyntaxReceiver(string Type)
