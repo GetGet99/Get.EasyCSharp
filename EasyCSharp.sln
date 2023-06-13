@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharp.Generator", "Eas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharpTester", "EasyCSharpTester\EasyCSharpTester.csproj", "{D3877D66-8025-4ECE-915F-95DF1ED9DCE8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCSharp", "EasyCSharp\EasyCSharp.csproj", "{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Get.EasyCSharp", "EasyCSharp\Get.EasyCSharp.csproj", "{6142AA10-8396-4F2E-90C6-6648D9A3D8BE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopySourceGenerator", "CopySourceGenerator\CopySourceGenerator.csproj", "{1468FDB5-D5A2-4718-B8DC-78D2DA477AFA}"
 EndProject

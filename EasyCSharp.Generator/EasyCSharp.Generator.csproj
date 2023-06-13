@@ -13,6 +13,9 @@
 		<PackageOutputPath>..\Package</PackageOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Include="..\README.md" Pack="True" PackagePath="/" />
+	</ItemGroup>
+	<ItemGroup>
 		<Compile Remove="Attributes\CustomGeneratorAttribute.cs" />
 		<Compile Remove="Generator\CustomGeneratorGenerator.cs" />
 		<Compile Remove="Generator\OldEventHandlerGenerator.cs" />
@@ -36,9 +39,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-		<None Include="..\README.md">
-		  <Pack>True</Pack>
-		  <PackagePath>\</PackagePath>
-		</None>
+		
 	</ItemGroup>
 </Project>

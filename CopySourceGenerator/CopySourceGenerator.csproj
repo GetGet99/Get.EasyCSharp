@@ -1,10 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<Version>1.0.1</Version>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
 		<Nullable>enable</Nullable>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+		<RepositoryUrl>https://github.com/Get0457/EasyCSharp/tree/master</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<IncludeSymbols>True</IncludeSymbols>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Authors>Get</Authors>
+		<PackageOutputPath>..\Package</PackageOutputPath>
 	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\README.md" Pack="True" PackagePath="/" />
+		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+	</ItemGroup>
 	<ItemGroup>
 	  <Compile Include="..\EasyCSharp.GeneratorTools\GeneratorBase.cs" Link="GeneratorBase.cs" />
 	  <Compile Include="..\EasyCSharp.GeneratorTools\SyntaxReceiver.cs" Link="SyntaxReceiver.cs" />
