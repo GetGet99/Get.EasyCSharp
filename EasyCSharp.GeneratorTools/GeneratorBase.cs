@@ -1,11 +1,9 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿#pragma warning disable IDE0240
+#nullable enable
+#pragma warning restore IDE0240
+using Microsoft.CodeAnalysis;
 
-namespace EasyCSharp.Generator;
+namespace EasyCSharp.GeneratorTools;
 
 abstract class GeneratorBase<T> : ISourceGenerator where T : ISyntaxContextReceiver
 {
@@ -23,4 +21,18 @@ abstract class GeneratorBase<T> : ISourceGenerator where T : ISyntaxContextRecei
     }
     protected virtual void OnInitialize(GeneratorInitializationContext context) { }
     protected virtual void OnExecute(GeneratorExecutionContext context, T SyntaxReceiver) { }
+}
+public abstract class GeneratorBase : ISourceGenerator
+{
+    public void Initialize(GeneratorInitializationContext context)
+    {
+        OnInitialize(context);
+    }
+
+    public void Execute(GeneratorExecutionContext context)
+    {
+        OnExecute(context);
+    }
+    protected virtual void OnInitialize(GeneratorInitializationContext context) { }
+    protected virtual void OnExecute(GeneratorExecutionContext context) { }
 }

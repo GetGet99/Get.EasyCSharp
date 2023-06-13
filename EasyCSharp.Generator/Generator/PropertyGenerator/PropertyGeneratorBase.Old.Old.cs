@@ -4,18 +4,25 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using EasyCSharp.Generator;
+using CopySourceGenerator;
+using EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 namespace EasyCSharp;
-
-[Generator]
-public class PropertyGenerator : GeneratorBase<FieldAttributeSyntaxReceiver>
+[CopySource("AttributeSource", typeof(PropertyAttribute))]
+public abstract partial class PropertyGeneratorBase : GeneratorBase<FieldAttributeSyntaxReceiver>
 {
     protected override FieldAttributeSyntaxReceiver ConstructSyntaxReceiver() => new(AttributeTypeName);
+
+    protected override void OnInitialize(GeneratorInitializationContext context)
+    {
+        context.RegisterForPostInitialization(x => x.AddSource($"{typeof(PropertyAttribute).FullName}.g.cs", AttributeSource));
+    }
+
+
     protected virtual bool CustomOnChange => false;
     protected virtual string AttributeTypeName => typeof(PropertyAttribute).FullName;
     protected virtual string FileName(string ClaseName) => $"{ClaseName}.GeneratedProperty.g.cs";
@@ -96,14 +103,21 @@ namespace {namespaceName}
             return;
         }
         string? Suffix;
+        bool Override;
+        if (attributeData.NamedArguments.SingleOrDefault(
+                kvp => kvp.Key == nameof(DefaultPropertyAttribute.OverrideKeyword)
+            ).Value.Value is bool outboolean2)
+            Override = outboolean2;
+        else Override = DefaultPropertyAttribute.OverrideKeyword;
+
         string? PropertyHead =
             (Suffix = GetSuffix(
-                HeadLogic(fieldSymbol, propertyName),
+                (Override ? "override " : "") + HeadLogic(fieldSymbol, propertyName),
                 attributeData.NamedArguments.SingleOrDefault(
                     kvp => kvp.Key == nameof(DefaultPropertyAttribute.Visibility)
                 ).Value,
                 DefaultPropertyAttribute.Visibility
-            )) ?? HeadLogic(fieldSymbol, propertyName);
+            )) ?? ((Override ? "override " : "") + HeadLogic(fieldSymbol, propertyName));
         string? OnChange =
             attributeData.NamedArguments.SingleOrDefault(
                 kvp => kvp.Key == nameof(DefaultPropertyAttribute.OnChanged)

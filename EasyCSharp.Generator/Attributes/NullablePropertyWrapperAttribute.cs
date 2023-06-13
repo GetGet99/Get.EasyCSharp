@@ -2,7 +2,7 @@
 using System.Diagnostics;
 namespace EasyCSharp;
 
-public class AutoNotifyPropertyAttribute : PropertyAttribute
+class NullablePropertyWrapperAttribute : PropertyAttribute
 {
     
 }

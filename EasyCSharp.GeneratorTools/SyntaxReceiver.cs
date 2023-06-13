@@ -1,11 +1,14 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿#pragma warning disable IDE0240
+#nullable enable
+#pragma warning restore IDE0240
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace EasyCSharp.Generator;
+namespace EasyCSharp.GeneratorTools;
 
 class FieldAttributeSyntaxReceiver : ISyntaxContextReceiver
 {
@@ -77,6 +80,29 @@ class MethodAttributeSyntaxReceiver : ISyntaxContextReceiver
                     .Any(ad => ad.AttributeClass?.ToDisplayString() == Type)
                 )
                 Methods.Add(propSymbol);
+        }
+    }
+}
+public class ClassAttributeSyntaxReceiver : ISyntaxContextReceiver
+{
+    readonly string Type;
+    public ClassAttributeSyntaxReceiver(string Type)
+    {
+        this.Type = Type;
+    }
+    public List<INamedTypeSymbol> Classes { get; } = new List<INamedTypeSymbol>();
+
+    public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
+    {
+        if (context.Node is ClassDeclarationSyntax classDeclarationSyntax
+            && classDeclarationSyntax.AttributeLists.Count > 0)
+        {
+            if (
+                    context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax) is INamedTypeSymbol propSymbol &&
+                    propSymbol.GetAttributes()
+                    .Any(ad => ad.AttributeClass?.ToDisplayString() == Type)
+                )
+                Classes.Add(propSymbol);
         }
     }
 }
