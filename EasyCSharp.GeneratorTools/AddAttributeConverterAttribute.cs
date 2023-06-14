@@ -13,6 +13,7 @@ class AddAttributeConverterAttribute : Attribute
     public AddAttributeConverterAttribute(Type AttributeType) { }
     public string? MethodName { get; set; }
     public string? StructName { get; set; }
+    public Type? SampleObjectType { get; set; }
     public string? ParametersAsString { get; set; }
 
 }

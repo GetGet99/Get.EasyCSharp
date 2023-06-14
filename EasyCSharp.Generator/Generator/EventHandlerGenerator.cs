@@ -1,33 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Security;
-using System.Text;
 using EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using CopySourceGenerator;
-using static EasyCSharp.Generator.Generator.MethodGenerator;
 using System.Diagnostics;
 
 namespace EasyCSharp.Generator.Generator
 {
-    [CopySource("EventSource", typeof(EventAttribute))]
+    [CopySource("EventSource", typeof(EventAttributeBase))]
     [CopySource("CastFromSource", typeof(CastFromAttribute))]
+    [AddAttributeConverter(typeof(EventAttributeBase), SampleObjectType = typeof(EventAttribute), ParametersAsString = "default(System.Type)")]
     [AddAttributeConverter(typeof(EventAttribute), ParametersAsString = "default(System.Type)")]
+    [AddAttributeConverter(typeof(EventAttribute<Action>), StructName = "EventAttributeGenericWrapper", MethodName = "AttributeDataToEventAttributeGeneric")]
     [AddAttributeConverter(typeof(CastFromAttribute), ParametersAsString = "default(System.Type)")]
+    [AddAttributeConverter(typeof(CastFromAttribute<Action>),
+        StructName = $"CastFromAttributeGenericWrapper",
+        MethodName = "AttributeDataToCastFromAttributeGeneric"
+    )]
     [AddAttributeConverter(typeof(CastAttribute))]
     [Generator]
     partial class EventHandlerGenerator : AttributeBaseGenerator<
-        EventAttribute,
-        EventHandlerGenerator.EventAttributeWarpper,
+        EventAttributeBase,
+        EventHandlerGenerator.EventAttributeBaseWarpper,
         MethodDeclarationSyntax,
         IMethodSymbol
     >
     {
         static readonly string CastAttr = typeof(CastAttribute).FullName;
-        static readonly string CastFromAttr = typeof(CastFromAttribute).FullName;
+        static readonly string CastFromAttr = typeof(CastFromAttributeBase).FullName;
         static readonly string MethodImplAttr = typeof(System.Runtime.CompilerServices.MethodImplAttribute).FullName;
         static readonly string ArgumentException = typeof(ArgumentException).FullName;
         static readonly string AggressiveInliningValue = $"{typeof(System.Runtime.CompilerServices.MethodImplOptions).FullName}.{nameof(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)}";
@@ -35,18 +37,32 @@ namespace EasyCSharp.Generator.Generator
         protected override void OnInitialize(IncrementalGeneratorPostInitializationContext context)
         {
             context.AddSource($"{typeof(EventAttribute).FullName}.g.cs", EventSource);
-            context.AddSource($"{typeof(CastFromAttribute).FullName}.g.cs", CastFromSource);
+            context.AddSource($"{typeof(CastFromAttributeBase).FullName}.g.cs", CastFromSource);
+        }
+        partial class EventAttributeBaseWarpper
+        {
+            public ITypeSymbol EventType { get; set; }
+        }
+        protected override EventAttributeBaseWarpper TransformAttribute(AttributeData attributeData, Compilation compilation)
+        {
+            var a = AttributeDataToEventAttributeBase(attributeData, compilation);
+            if (attributeData.AttributeClass?.TypeArguments.Length > 0)
+            {
+                a.EventType = AttributeDataToEventAttributeGeneric(attributeData, compilation).DelegateType;
+            } else
+            {
+                a.EventType = AttributeDataToEventAttribute(attributeData, compilation).Type;
+            }
+            return a;
         }
         
-        protected override EventAttributeWarpper TransformAttribute(AttributeData attributeData, Compilation compilation)
-            => AttributeDataToEventAttribute(attributeData, compilation);
-        
-        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, (AttributeData Original, EventAttributeWarpper Wrapper)[] attributeData)
+        protected override string? OnPointVisit(GeneratorSyntaxContext genContext, MethodDeclarationSyntax syntaxNode, IMethodSymbol symbol, (AttributeData Original, EventAttributeBaseWarpper Wrapper)[] attributeData)
         {
             return GetCode(symbol, attributeData, genContext.SemanticModel.Compilation).JoinNewLine();
         }
-        IEnumerable<string> GetCode(IMethodSymbol method, (AttributeData Original, EventAttributeWarpper Wrapper)[] attributeDatas, Compilation compilation)
+        IEnumerable<string> GetCode(IMethodSymbol method, (AttributeData Original, EventAttributeBaseWarpper Wrapper)[] attributeDatas, Compilation compilation)
         {
+            var castFromBaseClass = compilation.GetTypeByMetadataName(CastFromAttr);
             foreach (var (_, attr) in attributeDatas) {
                 var visiblity = GetVisiblityPrefix(
                     method.DeclaredAccessibility.ToString().ToLower(),
@@ -60,13 +76,13 @@ namespace EasyCSharp.Generator.Generator
                     continue;
                 }
 
-                var delegateMethod = attr.Type.DelegateInvokeMethod;
+                var delegateMethod = (attr.EventType as INamedTypeSymbol)?.DelegateInvokeMethod;
                 //if (!Debugger.IsAttached)Debugger.Launch();
                 
                 if (delegateMethod is null)
                 {
                     // Error
-                    yield return $"// Error: {attr.Type} is not a Delegate Type.";
+                    yield return $"// Error: {attr.EventType} is not a Delegate Type.";
                     continue;
                 }
 
@@ -75,7 +91,7 @@ namespace EasyCSharp.Generator.Generator
                     from y in method.Parameters.Enumerate()
                     let castAttr = y.Item.GetAttributes()
                     .SingleOrDefault(x =>
-                        x.AttributeClass?.ToDisplayString() == CastFromAttr ||
+                        (x.AttributeClass?.IsSubclassFrom(castFromBaseClass) ?? false) ||
                         x.AttributeClass?.ToDisplayString() == CastAttr
                     )
                     select (
@@ -84,8 +100,12 @@ namespace EasyCSharp.Generator.Generator
                         castFromType: castAttr is null ? default :
                         
                         (
-                            castAttr.AttributeClass?.ToDisplayString() == CastFromAttr ?
-                            AttributeDataToCastFromAttribute(castAttr, compilation).Type :
+                            castAttr.AttributeClass?.IsSubclassFrom(castFromBaseClass) ?? false ?
+                            (
+                                castAttr.AttributeClass.TypeArguments.Length > 0 ?
+                                AttributeDataToCastFromAttributeGeneric(castAttr, compilation).FromType :
+                                AttributeDataToCastFromAttribute(castAttr, compilation).Type
+                            ):
                             default
                         ),
                         cast: castAttr is not null

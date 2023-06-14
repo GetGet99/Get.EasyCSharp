@@ -7,6 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="EasyCSharp.Generator" Version="0.0.3" />
+	  <ProjectReference Include="..\EasyCSharp.Generator\EasyCSharp.Generator.csproj">
+	    <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+		  <OutputItemType>Analyzer</OutputItemType>
+	  </ProjectReference>
 	</ItemGroup>
 </Project>

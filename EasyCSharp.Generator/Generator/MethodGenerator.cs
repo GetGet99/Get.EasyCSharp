@@ -24,8 +24,8 @@ namespace EasyCSharp.Generator.Generator
     >
     {
         public interface IMethodGeneratorAttributeWarpper { }
-        partial struct OptionalParameterAttributeWarpper : IMethodGeneratorAttributeWarpper { }
-        partial struct SubstitudeParameterAttributeWarpper : IMethodGeneratorAttributeWarpper { }
+        partial class OptionalParameterAttributeWarpper : IMethodGeneratorAttributeWarpper { }
+        partial class SubstitudeParameterAttributeWarpper : IMethodGeneratorAttributeWarpper { }
         static readonly string MethodImplAttr = typeof(System.Runtime.CompilerServices.MethodImplAttribute).FullName;
         static readonly string AggressiveInliningValue = $"{typeof(System.Runtime.CompilerServices.MethodImplOptions).FullName}.{nameof(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)}";
         

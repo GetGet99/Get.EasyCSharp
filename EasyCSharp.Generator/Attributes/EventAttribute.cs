@@ -5,15 +5,10 @@ using System;
 namespace EasyCSharp;
 
 /// <summary>
-/// Generates a method with the same argument types as the given delegate type
+/// Please do not use this class
 /// </summary>
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
-class EventAttribute : Attribute
+abstract class EventAttributeBase : Attribute
 {
-    /// <param name="Type">Event Type, must be a <see cref="Delegate"/></param>
-#pragma warning disable IDE0060
-    public EventAttribute(Type Type, bool IsTypeNullable = false) { }
-#pragma warning restore IDE0060
     /// <summary>
     /// The name of the event, <c>null</c> defaults to the same name as the method
     /// </summary>
@@ -34,4 +29,26 @@ class EventAttribute : Attribute
     /// Default means the same visiblity as the method.
     /// </summary>
     public GeneratorVisibility Visibility { get; set; } = GeneratorVisibility.Default;
+}
+
+/// <summary>
+/// Generates a method with the same argument types as the given delegate type
+/// </summary>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+class EventAttribute : EventAttributeBase
+{
+    /// <param name="Type">Event Type, must be a <see cref="Delegate"/></param>
+#pragma warning disable IDE0060
+    public EventAttribute(Type Type) { }
+#pragma warning restore IDE0060
+}
+
+/// <summary>
+/// Generates a method with the same argument types as the given delegate type
+/// </summary>
+/// <typeparam name="DelegateType">Event Type, must be a <see cref="Delegate"/></typeparam>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+class EventAttribute<DelegateType> : EventAttributeBase where DelegateType : Delegate
+{
+    public EventAttribute() { }
 }
