@@ -1,10 +1,10 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
 
 interface IExpression : ISyntax
 {

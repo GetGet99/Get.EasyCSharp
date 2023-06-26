@@ -1,5 +1,5 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
-namespace EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 
 interface IMember : ISyntax
 {

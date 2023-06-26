@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using CopySourceGenerator;
-using EasyCSharp.GeneratorTools;
+﻿using CopySourceGenerator;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EasyCSharp.GeneratorTools;
+namespace Get.EasyCSharp.GeneratorTools;
 [CopySource("sExtension", typeof(Extension))]
 [CopySource("sGeneratorBase", typeof(GeneratorBase))]
 [CopySource("sSyntaxReceiver", typeof(ClassAttributeSyntaxReceiver))]

@@ -1,4 +1,4 @@
-﻿using EasyCSharp;
+﻿using Get.EasyCSharp;
 
 namespace EasyCSharpTester
 {
@@ -8,7 +8,9 @@ namespace EasyCSharpTester
         [OptionalParameter(nameof(GG), 1 + 1)]
         public void Proc(string Hello, int GG)
         {
-            
+
         }
+        [AutoEventProperty]
+        string? test;
     }
 }

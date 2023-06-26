@@ -8,7 +8,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EasyCSharp.GeneratorTools;
+namespace Get.EasyCSharp.GeneratorTools;
 
 abstract class AttributeBaseGenerator<TAttribute1, TAttributeDataType1, TSyntaxNode, TSymbol> : IIncrementalGenerator
     // The User-Defined Attribute Type to process

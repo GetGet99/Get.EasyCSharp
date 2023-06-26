@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using CopySourceGenerator;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
-namespace EasyCSharp;
+namespace Get.EasyCSharp.GeneratorTools;
 [CopySource("PropertyAttributeSource", typeof(AddAttributeConverterAttribute))]
 [Generator]
 partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSyntaxReceiver>
@@ -97,7 +96,7 @@ partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSyntaxRec
                 .Value.Value.CastOrDefault(DefaultAddAttributeConverterAttribute.ParametersAsString) ?? "";
 
 
-            /// <see cref="AddAttributeConverterAttribute.ParametersAsString"/>
+            /// <see cref="AddAttributeConverterAttribute.SampleObjectType"/>
             var _SampleObjectType = attribute.NamedArguments.SingleOrDefault(
                 x => x.Key == nameof(AddAttributeConverterAttribute.SampleObjectType))
                 .Value;
@@ -230,7 +229,7 @@ partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSyntaxRec
                            select
                                $"""
                                 // {param.Name}
-                                result.{param.Name} = {(type.TypeKind == TypeKind.Enum ? $"({type})" : "")}{typeof(Extension)}.CastOrDefault(attributeData.ConstructorArguments[{i}].Value, {
+                                result.{param.Name} = {(type.TypeKind == TypeKind.Enum ? $"({type})" : "")}{typeof(Extension).FullName}.CastOrDefault(attributeData.ConstructorArguments[{i}].Value, {
                                     (type.TypeKind == TypeKind.Enum ? $"({((INamedTypeSymbol)type).EnumUnderlyingType})default({type})" : $"default({type})")
                                 });
                                 """
@@ -260,7 +259,7 @@ partial class AtributeConverterGenerator : GeneratorBase<ClassAttributeSyntaxRec
                                         $"""
                                         // {member.Name}
                                         case "{member.Name}":
-                                            result.{member.Name} = {(type.TypeKind == TypeKind.Enum ? $"({type})" : "")}{typeof(Extension)}.CastOrDefault(v.Value.Value, {
+                                            result.{member.Name} = {(type.TypeKind == TypeKind.Enum ? $"({type})" : "")}{typeof(Extension).FullName}.CastOrDefault(v.Value.Value, {
                                                 (type.TypeKind == TypeKind.Enum ? $"({((INamedTypeSymbol)type).EnumUnderlyingType})default({type})" : $"default({type})")
                                             });
                                             break;

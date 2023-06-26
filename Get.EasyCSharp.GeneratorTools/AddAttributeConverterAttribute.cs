@@ -3,7 +3,7 @@
 #pragma warning restore IDE0240
 using System;
 using System.Diagnostics;
-namespace EasyCSharp.GeneratorTools;
+namespace Get.EasyCSharp.GeneratorTools;
 
 enum PropertyVisibility : byte { Default = default, Public, Protected, Private, DoNotGenerate }
 

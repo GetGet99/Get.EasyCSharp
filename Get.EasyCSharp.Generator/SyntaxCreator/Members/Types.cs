@@ -1,10 +1,10 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 
 interface IType : IMember
 {

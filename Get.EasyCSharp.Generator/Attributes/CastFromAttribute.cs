@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyCSharp;
+namespace Get.EasyCSharp;
 
 class CastFromAttributeBase : Attribute
 {

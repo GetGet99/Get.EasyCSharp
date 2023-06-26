@@ -1,9 +1,9 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 
 abstract class MethodBase
 {

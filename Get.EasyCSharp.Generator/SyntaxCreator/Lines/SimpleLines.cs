@@ -1,9 +1,9 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
 
 record struct CustomLine(string StringRepresentaion) : ILine { }
 

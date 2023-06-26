@@ -1,4 +1,4 @@
-﻿namespace EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+﻿namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
 
 interface ILine : ISyntax { }
 

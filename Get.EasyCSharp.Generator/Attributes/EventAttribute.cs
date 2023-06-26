@@ -2,7 +2,7 @@
 #nullable enable
 #pragma warning restore IDE0240
 using System;
-namespace EasyCSharp;
+namespace Get.EasyCSharp;
 
 /// <summary>
 /// Please do not use this class

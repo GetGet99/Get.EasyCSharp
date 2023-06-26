@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>preview</LangVersion>
 		<Nullable>enable</Nullable>
@@ -21,6 +21,8 @@
 	  <None Remove="Generator\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Include="Attributes\AutoEventPropertyAttribute.cs" />
+	  <Compile Include="Attributes\AutoEventNotifyPropertyAttribute.cs" />
 	  <Compile Include="Attributes\AutoNotifyPropertyAttribute.cs" />
 	  <Compile Include="Attributes\CastFromAttribute.cs" />
 	  <Compile Include="Attributes\EventAttribute.cs" />
@@ -28,6 +30,8 @@
 	  <Compile Include="Attributes\PropertyAttribute.cs" />
 	  <Compile Include="Generator\EventHandlerGenerator.cs" />
 	  <Compile Include="Generator\MethodGenerator.cs" />
+	  <Compile Include="Generator\PropertyGenerator\AutoEventPropertyGenerator.cs" />
+	  <Compile Include="Generator\PropertyGenerator\AutoEventNotifyPropertyGenerator.cs" />
 	  <Compile Include="Generator\PropertyGenerator\AutoNotifyPropertyGenerator.cs" />
 	  <Compile Include="Generator\PropertyGenerator\PropertyGenerator.cs" />
 	  <Compile Include="Generator\PropertyGenerator\PropertyGeneratorBase.cs" />

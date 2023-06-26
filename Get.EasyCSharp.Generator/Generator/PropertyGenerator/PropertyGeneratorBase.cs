@@ -4,18 +4,18 @@ using System.Drawing;
 using System.Linq;
 using System.Security;
 using System.Text;
-using EasyCSharp.GeneratorTools;
+using Get.EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using CopySourceGenerator;
-using EasyCSharp.GeneratorTools.SyntaxCreator;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Members;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Lines;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
 using System.Diagnostics;
 
-namespace EasyCSharp;
+namespace Get.EasyCSharp.Generator.PropertyGenerator;
 
 [AddAttributeConverter(typeof(PropertyAttribute))]
 partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
@@ -43,6 +43,10 @@ partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
         {
             if (attr.Visibility is GeneratorVisibility.DoNotGenerate) continue;
             var propertyName = ChooseName(field.Name, attr.PropertyName);
+            LinkedList<ILine> code = new();
+            OnPropertyVisited(code, field, propertyName, originalattr, compilation);
+            if (code.Count > 0)
+                yield return code.Select(x => x.StringRepresentaion).JoinNewLine().IndentWOF(1);
             yield return new Property(GetSyntaxVisiblity(attr.Visibility), new(field.Type), propertyName)
             {
                 Documentation = new CustomDocumentation(
@@ -95,14 +99,15 @@ partial class PropertyGeneratorBase<T> : AttributeBaseGenerator<
                         },
                         new Assign(new(field.Name), new CustomExpression(attr.CustomSetExpression ?? "value")).EndLine(),
                         () => attr.OnChanged is not null ? new MethodCall(attr.OnChanged).EndLine() : null,
-                        list => OnSet(list, field, propertyName, originalattr)
+                        list => OnSet(list, field, propertyName, originalattr, compilation)
                     }
                 }
             }.StringRepresentaion;
         }
         yield break;
     }
-    protected virtual void OnSet(LinkedList<ILine> Lines, IFieldSymbol symbol, string PropertyName, AttributeData data) { }
+    protected virtual void OnPropertyVisited(LinkedList<ILine> Lines, IFieldSymbol symbol, string PropertyName, AttributeData data, Compilation compilation) { }
+    protected virtual void OnSet(LinkedList<ILine> Lines, IFieldSymbol symbol, string PropertyName, AttributeData data, Compilation compilation) { }
     static string? GetVisiblityPrefix(string DefaultPrefix, GeneratorVisibility propertyVisibility)
         => propertyVisibility switch
         {

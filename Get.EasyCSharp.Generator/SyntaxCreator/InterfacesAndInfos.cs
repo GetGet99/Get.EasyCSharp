@@ -1,10 +1,10 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
-using EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Expression;
+using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator;
 
 enum SyntaxVisibility : byte { Default = default, Public, Protected, Private, DoNotGenerate }
 

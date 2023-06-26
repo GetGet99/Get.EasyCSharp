@@ -3,7 +3,7 @@
 #pragma warning restore IDE0240
 using System;
 using System.Diagnostics;
-namespace EasyCSharp;
+namespace Get.EasyCSharp;
 
 enum GeneratorVisibility : byte { Default = default, Public, Protected, Private, DoNotGenerate }
 

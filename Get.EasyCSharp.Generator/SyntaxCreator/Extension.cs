@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator;
 
 static partial class Extension
 {

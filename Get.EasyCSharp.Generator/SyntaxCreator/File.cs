@@ -1,9 +1,9 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator;
 record struct Namespace(string NamespaceString) : ISyntax
 {
     public Namespace(INamespaceSymbol symbol) : this(symbol.ToString()) { }

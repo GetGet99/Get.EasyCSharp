@@ -3,7 +3,7 @@
 #pragma warning restore IDE0240
 using Microsoft.CodeAnalysis;
 
-namespace EasyCSharp.GeneratorTools;
+namespace Get.EasyCSharp.GeneratorTools;
 
 abstract class GeneratorBase<T> : ISourceGenerator where T : ISyntaxContextReceiver
 {

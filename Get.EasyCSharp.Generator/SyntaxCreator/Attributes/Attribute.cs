@@ -1,8 +1,8 @@
-﻿using EasyCSharp.GeneratorTools.SyntaxCreator.Members;
+﻿using Get.EasyCSharp.GeneratorTools.SyntaxCreator.Members;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
+namespace Get.EasyCSharp.GeneratorTools.SyntaxCreator.Attributes;
 interface IAttribute : ISyntax { }
 record struct Attribute(FullType AttributeType) : IAttribute
 {

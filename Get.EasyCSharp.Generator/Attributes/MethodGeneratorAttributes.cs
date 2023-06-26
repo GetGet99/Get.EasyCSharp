@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace EasyCSharp;
+namespace Get.EasyCSharp;
 
 /// <summary>
 /// Makes an overload without the parameter that calls the method with parameter

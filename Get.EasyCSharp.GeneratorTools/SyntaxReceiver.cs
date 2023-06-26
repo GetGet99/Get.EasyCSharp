@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 
-namespace EasyCSharp.GeneratorTools;
+namespace Get.EasyCSharp.GeneratorTools;
 
 class FieldAttributeSyntaxReceiver : ISyntaxContextReceiver
 {
