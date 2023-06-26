@@ -45,7 +45,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\CopySourceGenerator\CopySourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<ProjectReference Include="..\EasyCSharp.GeneratorTools\EasyCSharp.GeneratorTools.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\Get.EasyCSharp.GeneratorTools\Get.EasyCSharp.GeneratorTools.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		
 	</ItemGroup>
 	<ItemGroup>
