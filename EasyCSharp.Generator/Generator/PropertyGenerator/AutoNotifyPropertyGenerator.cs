@@ -14,7 +14,7 @@ namespace EasyCSharp;
 
 [CopySource("AttributeSource", typeof(AutoNotifyPropertyAttribute))]
 [Generator]
-partial class AutoNotifyPropertyGenerator : PropertyGeneratorBase<AutoNotifyPropertyAttribute>
+partial class AutoNotifyPropertyGenerator : PropertyGeneratorBase<AutoNotifyPropertyAttribute, bool>
 {
     protected override void OnInitialize(GeneratorInitializationContext context)
     {
@@ -27,8 +27,9 @@ partial class AutoNotifyPropertyGenerator : PropertyGeneratorBase<AutoNotifyProp
     {
         return $" : {context.Compilation.GetTypeByMetadataName(typeof(INotifyPropertyChanged).FullName)?.ToDisplayString() ?? "// INotifyPropertyChanged type is not found on the assembly"}";
     }
-    protected override string OnSet(IFieldSymbol FieldSymbol, string PropertyName, AttributeData attributeData)
-    => $"""
+    protected override string OnSet(IFieldSymbol FieldSymbol, string PropertyName, AttributeData attributeData, bool /* Info */ useMethod)
+    => useMethod ? $"this.InvokePropertyChanged(nameof({PropertyName}));" :
+        $"""
             this.PropertyChanged?.Invoke(
                 this,
                 new {typeof(PropertyChangedEventArgs).FullName}(
@@ -36,13 +37,15 @@ partial class AutoNotifyPropertyGenerator : PropertyGeneratorBase<AutoNotifyProp
                 )
             );
             """;
-    protected override string PreGeneratorRun(INamedTypeSymbol classSymbol, GeneratorExecutionContext context)
+    protected override (string, bool) PreGeneratorRun(INamedTypeSymbol classSymbol, GeneratorExecutionContext context)
     {
+        var members = classSymbol.GetMembers();
         // if the class doesn't implement PropertyChanged already, implement it
-        if (!classSymbol.GetMembers().Any(x => x.Name == "PropertyChanged"))
-        {
-            return $"public event {typeof(PropertyChangedEventHandler).FullName}? PropertyChanged;";
-        }
-        return "";
+        if (members.Any(x => x is { Name: "InvokePropertyChanged", Kind: SymbolKind.Method }))
+            return (base.PreGeneratorRun(classSymbol, context).Text, true);
+        else if (members.Any(x => x.Name == "PropertyChanged"))
+            return (base.PreGeneratorRun(classSymbol, context).Text, false);
+        else
+            return ($"public event {typeof(PropertyChangedEventHandler).FullName}? PropertyChanged;", false);
     }
 }

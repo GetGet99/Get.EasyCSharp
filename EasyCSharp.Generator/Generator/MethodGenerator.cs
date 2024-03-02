@@ -8,6 +8,8 @@ using EasyCSharp.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using CopySourceGenerator;
+using System.Collections;
+
 namespace EasyCSharp.Generator.Generator
 {
     [CopySource("MethodGeneratorAttributes", typeof(MethodGeneratorAttribute))]
